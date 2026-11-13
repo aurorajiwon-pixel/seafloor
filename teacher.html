@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>교사 화면 · 바다 밑에 남은 흔적</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jua','Malgun Gothic',sans-serif;color:#334155;background:#f0f9ff;min-height:100vh}
+button,input,select{font-family:inherit}
+button{cursor:pointer}
+.read{font-family:'Gowun Dodum','Malgun Gothic',sans-serif;line-height:1.6}
+.wrap{max-width:1400px;margin:auto;padding:16px}
+.card{background:#fff;border-radius:20px;box-shadow:0 6px 0 #cbe7f7;padding:18px;margin-bottom:16px}
+h1{font-size:30px;color:#0369a1;margin-bottom:10px}
+h3{font-size:21px;margin-bottom:8px}
+.inp{font-size:18px;padding:8px 12px;border:3px solid #bae6fd;border-radius:12px}
+.btn{font-size:17px;padding:8px 16px;border:none;border-radius:14px;color:#fff;background:#0ea5e9;box-shadow:0 4px 0 #0369a1}
+.btn.o{background:#f97316;box-shadow:0 4px 0 #c2410c}
+.btn.g{background:#10b981;box-shadow:0 4px 0 #047857}
+.btn.gray{background:#94a3b8;box-shadow:0 4px 0 #64748b}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.stg{border:3px solid #bae6fd;background:#fff;border-radius:14px;padding:6px 12px;font-size:17px;color:#334155}
+.stg.on{background:#0ea5e9;border-color:#0ea5e9;color:#fff}
+.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tab{border:none;background:#e0f2fe;border-radius:14px;padding:8px 16px;font-size:18px;color:#0369a1}
+.tab.on{background:#0369a1;color:#fff}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th{background:#e0f2fe;padding:7px;font-weight:normal;position:sticky;top:0}
+td{padding:6px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+td.c{text-align:center}
+.ans{font-family:'Gowun Dodum',sans-serif;font-size:15px;white-space:pre-wrap;max-width:420px}
+.ok{color:#059669}.no{color:#e11d48}.mute{color:#94a3b8}
+.bar{height:12px;background:#e2e8f0;border-radius:6px;overflow:hidden;min-width:120px}
+.bar i{display:block;height:100%;background:#0ea5e9}
+.q{background:#fffbeb;border-radius:12px;padding:8px 12px;margin:6px 0;font-family:'Gowun Dodum',sans-serif}
+.q small{font-family:'Jua',sans-serif;color:#92400e;margin-right:8px}
+.mini{display:inline-flex;gap:2px;vertical-align:middle}
+.mini i{width:14px;height:22px;border-radius:3px;display:inline-block;border:1px solid #cbd5e1}
+.mini .N{background:#6b4a3a}.mini .R{background:#f6e3c6}
+#msg{font-size:16px;margin-left:8px}
+.pane{display:none}.pane.on{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🌊 바다 밑에 남은 흔적 · 교사 화면</h1>
+
+  <div class="card" id="loginCard">
+    <h3>교사 로그인</h3>
+    <div class="row">
+      <input class="inp" id="em" type="email" placeholder="이메일">
+      <input class="inp" id="pw" type="password" placeholder="비밀번호">
+      <button class="btn" id="loginBtn">로그인</button>
+      <span id="loginMsg" class="no"></span>
+    </div>
+  </div>
+
+  <div id="app" style="display:none">
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <h3 style="margin:0">학생 화면에 열 단계</h3><span id="msg" class="mute"></span>
+      </div>
+      <div class="row" id="stageBtns"></div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:12px">
+        <select class="inp" id="clsSel"></select>
+        <span id="count" class="mute"></span>
+        <button class="btn gray" id="refBtn">새로고침</button>
+      </div>
+      <div class="tabs" id="tabs"></div>
+      <div class="pane on" id="p0"></div>
+      <div class="pane" id="p1"></div>
+      <div class="pane" id="p2"></div>
+      <div class="pane" id="p3"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const firebaseConfig = { apiKey: "AIzaSyCmdo6XSf8Hu62aPZezynd9WoEMsj5mc5M", projectId: "cloud-9e6ad" };
+const COL = 'seafloor', CTRL = 'seafloor_ctrl';
+const FS = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents`;
+const TKEY = 'seafloor_teacher_' + firebaseConfig.projectId;
+const NAMES = ['처음 생각', '바다 밑 재기', '해저 지형', '해령 주변 자료', '해양저 확장설', '고지자기 줄무늬', '지각 열류량', '섭입대와 변환 단층', '나중 생각'];
+const SONAR_T = { A: 0.4, B: 6.0, C: 3.2, D: 10.4 };
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let AUTH = null, STU = [], CTRLS = { stage: 1, reveal: false }, TAB = 0;
+
+async function login(){
+  $('loginMsg').textContent = '';
+  try {
+    const r = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseConfig.apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: $('em').value.trim(), password: $('pw').value, returnSecureToken: true }) });
+    const j = await r.json(); if (!r.ok) throw new Error(j.error && j.error.message);
+    AUTH = { idToken: j.idToken, refreshToken: j.refreshToken, exp: Date.now() + (Number(j.expiresIn) - 120) * 1000 };
+    try { localStorage.setItem(TKEY, JSON.stringify(AUTH)); } catch (e) {}
+    startApp();
+  } catch (e) { $('loginMsg').textContent = '로그인하지 못했어요 (' + (e.message || '') + ')'; }
+}
+async function token(){
+  if (AUTH && Date.now() < AUTH.exp) return AUTH.idToken;
+  const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${firebaseConfig.apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(AUTH.refreshToken) });
+  const j = await r.json(); if (!r.ok) throw new Error('refresh');
+  AUTH = { idToken: j.id_token, refreshToken: j.refresh_token, exp: Date.now() + (Number(j.expires_in) - 120) * 1000 };
+  try { localStorage.setItem(TKEY, JSON.stringify(AUTH)); } catch (e) {}
+  return AUTH.idToken;
+}
+async function listAll(){
+  const out = []; let pt = '';
+  do {
+    const t = await token();
+    const r = await fetch(`${FS}/${COL}?pageSize=300${pt ? '&pageToken=' + encodeURIComponent(pt) : ''}`, { headers: { Authorization: 'Bearer ' + t } });
+    if (!r.ok) throw new Error('list ' + r.status);
+    const j = await r.json(); (j.documents || []).forEach(d => out.push(d)); pt = j.nextPageToken || '';
+  } while (pt);
+  return out;
+}
+async function setCtrl(fields){
+  const t = await token();
+  const mask = Object.keys(fields).map(k => 'updateMask.fieldPaths=' + k).join('&');
+  const r = await fetch(`${FS}/${CTRL}/state?${mask}`, { method: 'PATCH', headers: { Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: JSON.stringify({ fields }) });
+  if (!r.ok) throw new Error('ctrl ' + r.status);
+}
+async function getCtrl(){
+  const t = await token();
+  const r = await fetch(`${FS}/${CTRL}/state`, { headers: { Authorization: 'Bearer ' + t } });
+  if (r.status === 404) return;
+  const d = await r.json();
+  if (d.fields) { CTRLS.stage = d.fields.stage ? Number(d.fields.stage.integerValue) : 1; CTRLS.reveal = !!(d.fields.reveal && d.fields.reveal.booleanValue); }
+}
+function parse(d){
+  const f = d.fields || {};
+  let data = {}; try { data = JSON.parse(f.data ? f.data.stringValue : '{}'); } catch (e) {}
+  return { id: d.name.split('/').pop(), name: f.name ? f.name.stringValue : '', cls: f.cls ? f.cls.stringValue : '', num: f.num ? Number(f.num.integerValue) : 0, done: f.done ? Number(f.done.integerValue) : 1, updated: f.updated ? Number(f.updated.integerValue) : 0, S: data };
+}
+
+/* ===== 그리기 ===== */
+function renderCtrl(){
+  const box = $('stageBtns'); box.innerHTML = '';
+  NAMES.forEach((n, i) => {
+    const b = document.createElement('button'); b.className = 'stg' + (CTRLS.stage === i + 1 ? ' on' : '');
+    b.textContent = `${i + 1}. ${n}`;
+    b.onclick = async () => { try { await setCtrl({ stage: { integerValue: String(i + 1) } }); CTRLS.stage = i + 1; renderCtrl(); flash(`${i + 1}단계까지 열었어요`); } catch (e) { flash('저장하지 못했어요 (' + e.message + ')'); } };
+    box.appendChild(b);
+  });
+}
+function flash(t){ $('msg').textContent = t; clearTimeout(flash._t); flash._t = setTimeout(() => $('msg').textContent = '', 3000); }
+function filtered(){ const c = $('clsSel').value; return STU.filter(s => !c || s.cls === c).sort((a, b) => (a.cls - b.cls) || (a.num - b.num)); }
+function sonarOk(S){ const d = (S.s2 && S.s2.d) || {}; return Object.keys(SONAR_T).filter(k => Math.abs(Number(d[k]) - 1500 * SONAR_T[k] / 2) <= 1).length; }
+function mini(st){ return '<span class="mini">' + (st || []).map(v => `<i class="${v || ''}"></i>`).join('') + '</span>'; }
+function mark(v, ans){ if (!v) return '<span class="mute">-</span>'; return `<span class="${v === ans ? 'ok' : 'no'}">${esc(v)}</span>`; }
+
+function renderAll(){
+  const L = filtered();
+  $('count').textContent = `${L.length}명`;
+  // 진행 현황
+  $('p0').innerHTML = `<table><tr><th>반</th><th>번호</th><th>이름</th><th>진행</th><th>② 수심</th><th>③ C · D</th><th>④ 나이 · 퇴적물</th><th>⑤ 2억 년</th><th>⑥ 100 km 나이</th><th>⑦</th><th>⑧ 섭입 · 변환</th><th>질문</th></tr>` +
+    L.map(s => { const S = s.S || {}; const s3 = S.s3 || {}, s4 = S.s4 || {}, s5 = S.s5 || {}, s6 = S.s6 || {}, s7 = S.s7 || {}, s8 = S.s8 || {};
+      return `<tr><td class="c">${esc(s.cls)}</td><td class="c">${s.num}</td><td>${esc(s.name)}</td>
+      <td><div class="bar"><i style="width:${Math.round((Math.min(s.done, 10) - 1) / 9 * 100)}%"></i></div><span class="mute">${Math.min(s.done - 1, 9)}/9</span></td>
+      <td class="c">${sonarOk(S)}/4</td><td class="c">${mark(s3.c, '해령')} · ${mark(s3.d, '해구')}</td>
+      <td class="c">${mark(s4.a, '많아진다')} · ${mark(s4.b, '두꺼워진다')}</td><td class="c">${mark(s5.old && s5.old.slice(0, 2), '해구')}</td><td class="c">${s6.age ? `<span class="${Math.abs(Number(s6.age) - 200) <= 5 ? 'ok' : 'no'}">${esc(s6.age)}</span>` : '<span class="mute">-</span>'}</td>
+      <td class="c">${mark(s7.pick, '해령')}</td><td class="c">${mark(s8.a, '깊어진다')} · ${mark(s8.b, '해령과 해령 사이')}</td>
+      <td class="c">${(S.qs || []).length}</td></tr>`; }).join('') + '</table>';
+  // 질문 모음
+  const qs = []; L.forEach(s => ((s.S && s.S.qs) || []).forEach(q => qs.push(Object.assign({ who: `${s.cls}-${s.num} ${s.name}` }, q))));
+  qs.sort((a, b) => b.at - a.at);
+  $('p1').innerHTML = qs.length ? qs.map(q => `<div class="q"><small>${esc(q.tag)} · ${q.src}단계 · ${esc(q.who)}</small>${esc(q.t)}</div>`).join('') : '<p class="mute">아직 질문이 없어요</p>';
+  // 생각 변화
+  $('p2').innerHTML = `<table><tr><th>학생</th><th>처음 생각</th><th>나중 생각</th><th>해령에서는</th><th>해구에서는</th></tr>` +
+    L.map(s => { const S = s.S || {}; const a = S.s1 || {}, b = S.s9 || {};
+      return `<tr><td>${esc(s.cls)}-${s.num} ${esc(s.name)}</td><td class="ans">${esc(a.idea)}</td><td class="ans">${esc(b.now)}</td><td class="ans">${esc(b.r)}</td><td class="ans">${esc(b.t)}</td></tr>`; }).join('') + '</table>';
+  // 단계별 서술
+  const cols = [['② 바다 밑 모습', S => S.s2 && S.s2.shape], ['④ 양쪽 비교', S => S.s4 && S.s4.c], ['④ 추론: 해령에서는?', S => S.s4 && S.s4.d],
+    ['⑤ 나이 규칙 설명', S => S.s5 && S.s5.a], ['⑤ 퇴적물 규칙 설명', S => S.s5 && S.s5.b], ['⑤ 내 추론과 비교', S => S.s5 && S.s5.cmp], ['⑥ 대칭인 까닭', S => S.s6 && S.s6.why], ['⑥ 속도와 줄무늬 폭', S => S.s6 && S.s6.speed], ['⑥ 100 km 지점 나이(만 년)', S => S.s6 && S.s6.age], ['⑥ 단면: 수심·퇴적물', S => S.s6 && S.s6.sec], ['⑦ 렌즈', S => S.s7 && S.s7.lens], ['⑧ 뒷받침', S => S.s8 && S.s8.why]];
+  const pick = $('colSel') ? Number($('colSel').value) : 0;
+  $('p3').innerHTML = `<div class="row" style="margin-bottom:10px"><select class="inp" id="colSel">${cols.map((c, i) => `<option value="${i}" ${i === pick ? 'selected' : ''}>${c[0]}</option>`).join('')}</select></div>` +
+    `<table><tr><th>학생</th><th>답</th></tr>` + L.map(s => `<tr><td style="width:180px">${esc(s.cls)}-${s.num} ${esc(s.name)}</td><td class="ans">${esc(cols[pick][1](s.S || {}) || '')}</td></tr>`).join('') + '</table>';
+  $('colSel').onchange = renderAll;
+}
+function renderTabs(){
+  const t = $('tabs'); t.innerHTML = '';
+  ['진행 현황', '질문 모음', '생각 변화', '단계별 서술'].forEach((n, i) => {
+    const b = document.createElement('button'); b.className = 'tab' + (i === TAB ? ' on' : ''); b.textContent = n;
+    b.onclick = () => { TAB = i; renderTabs(); document.querySelectorAll('.pane').forEach((p, k) => p.classList.toggle('on', k === i)); };
+    t.appendChild(b);
+  });
+}
+async function refresh(){
+  try { const docs = await listAll(); STU = docs.map(parse); await getCtrl(); renderCtrl(); renderAll(); }
+  catch (e) { flash('불러오지 못했어요 (' + e.message + ')'); }
+}
+function startApp(){
+  $('loginCard').style.display = 'none'; $('app').style.display = 'block';
+  $('clsSel').innerHTML = '<option value="">전체 반</option>' + Array.from({ length: 7 }, (_, i) => `<option value="${i + 1}">${i + 1}반</option>`).join('');
+  $('clsSel').onchange = renderAll; $('refBtn').onclick = refresh;
+  renderTabs(); renderCtrl(); refresh();
+  setInterval(refresh, 5000);
+}
+$('loginBtn').onclick = login;
+$('pw').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+try { const a = JSON.parse(localStorage.getItem(TKEY) || 'null'); if (a && a.refreshToken) { AUTH = a; startApp(); } } catch (e) {}
+window.TCH = { parse, sonarOk, renderAll, set STU(v){ STU = v; }, startOffline(){ $('loginCard').style.display = 'none'; $('app').style.display = 'block'; $('clsSel').innerHTML = '<option value="">전체 반</option>'; renderTabs(); renderCtrl(); renderAll(); } };
+</script>
+</body>
+</html>

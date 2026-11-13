@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>바다 밑에 남은 흔적 · 연습용 미리보기</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jua','Malgun Gothic','Apple SD Gothic Neo',sans-serif;color:#334155;background:linear-gradient(180deg,#cdeffd 0%,#eaf8ff 40%,#f2fbff 100%);min-height:100vh;overflow-x:hidden}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+.screen{display:none}.screen.on{display:block}
+.read{font-family:'Gowun Dodum','Malgun Gothic',sans-serif;line-height:1.7}
+#start{min-height:100vh;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:30px 16px}
+#start.on{display:flex}
+.title{font-size:46px;color:#0369a1;text-shadow:3px 3px 0 #fff,6px 6px 0 #bae6fd;margin:10px 0}
+.sub{font-size:21px;color:#64748b;margin-bottom:22px}
+.card{background:#fff;border-radius:26px;box-shadow:0 8px 0 #cbe7f7,0 14px 28px rgba(14,116,144,.12);padding:22px}
+.inp{font-size:19px;padding:10px 14px;border:3px solid #bae6fd;border-radius:14px;width:100%;outline:none;background:#fff;color:#334155}
+.inp:focus{border-color:#0ea5e9}
+textarea.inp{min-height:84px;resize:vertical;font-family:'Gowun Dodum',sans-serif;font-size:18px;line-height:1.6}
+.inp:disabled{background:#f8fafc;color:#475569;border-color:#e2e8f0}
+.big{font-size:21px;padding:12px 28px;border:none;border-radius:18px;color:#fff;background:#f97316;box-shadow:0 5px 0 #c2410c;transition:.1s}
+.big:active{transform:translateY(3px);box-shadow:0 2px 0 #c2410c}
+.big.blue{background:#0ea5e9;box-shadow:0 5px 0 #0369a1}
+.big.green{background:#10b981;box-shadow:0 5px 0 #047857}
+.big.gray{background:#94a3b8;box-shadow:0 5px 0 #64748b}
+.big.sm{font-size:17px;padding:8px 18px}
+.big:disabled{background:#cbd5e1;box-shadow:0 5px 0 #94a3b8;cursor:default}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lab{font-size:18px;text-align:left;margin:12px 0 5px;display:block}
+.top{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;gap:10px;flex-wrap:wrap;max-width:1200px;margin:auto}
+.pill{background:#fff;border-radius:999px;padding:7px 16px;font-size:18px;box-shadow:0 4px 0 #cbe7f7}
+.save{font-size:15px;color:#64748b}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:4px 16px 16px;max-width:1200px;margin:auto}
+.tab{border:none;background:#fff;border-radius:18px;padding:9px 14px;font-size:17px;color:#334155;box-shadow:0 5px 0 #cbe7f7;display:flex;align-items:center;gap:6px}
+.tab .n{background:#f97316;color:#fff;border-radius:50%;width:27px;height:27px;line-height:27px;font-size:15px;text-align:center}
+.tab.on{background:#0ea5e9;color:#fff;box-shadow:0 5px 0 #0369a1}
+.tab.on .n{background:#fff;color:#0369a1}
+.tab.lock{filter:grayscale(1);opacity:.5;cursor:not-allowed}
+.wrap{max-width:1200px;margin:auto;padding:0 18px 120px}
+.stage{display:none}.stage.on{display:block}
+h2{font-size:32px;color:#0369a1;margin:4px 0 12px}
+h3{font-size:24px;color:#0f172a;margin:2px 0 8px}
+.box{margin-bottom:18px}
+.recall{background:#ecfeff;border-radius:16px;padding:12px 16px;font-size:18px;border:2px solid #a5f3fc;margin-bottom:14px}
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px}
+@media(max-width:900px){.two{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}}
+.photo{width:100%;border-radius:16px;display:block}
+.cap{font-size:14px;color:#64748b;text-align:right;margin-top:4px}
+canvas{width:100%;display:block;border-radius:16px;touch-action:none}
+.fb{font-size:17px;margin-top:6px;min-height:22px}
+.fb.ok{color:#059669}.fb.no{color:#e11d48}
+.lockrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+.lockmsg{font-size:16px;color:#64748b}
+.concept{border-left:8px solid #0ea5e9;background:#fff;border-radius:18px;padding:16px 18px;box-shadow:0 6px 0 #cbe7f7;margin-bottom:16px}
+.concept.y{border-color:#fbbf24}.concept.p{border-color:#a78bfa}.concept.g{border-color:#10b981}.concept.r{border-color:#f97316}
+.concept .tag{display:inline-block;background:#e0f2fe;border-radius:999px;padding:2px 12px;font-size:15px;margin-bottom:6px}
+.concept p{font-size:19px;margin:6px 0}
+.concept b{color:#0369a1}
+.formula{font-size:32px;text-align:center;color:#0369a1;background:#eff6ff;border-radius:16px;padding:14px;margin:10px 0}
+.lens{background:#0c4a6e;color:#fff;border-radius:20px;padding:16px 20px;margin-bottom:16px;box-shadow:0 6px 0 #082f49}
+.lens .lt{color:#fde047;font-size:19px;margin-bottom:4px}
+.lens .lq{font-size:23px;line-height:1.5}
+.waiting{text-align:center;padding:60px 20px;font-size:24px;color:#64748b}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+.chip{border:3px solid #bae6fd;background:#fff;border-radius:999px;padding:6px 16px;font-size:18px;color:#334155}
+.chip.on{background:#0ea5e9;border-color:#0ea5e9;color:#fff}
+.chip.ok{background:#10b981;border-color:#10b981;color:#fff}
+.chip.no{background:#fb7185;border-color:#fb7185;color:#fff}
+.chip:disabled{cursor:default}
+.mine{background:#fef9c3;border-radius:14px;padding:10px 14px;font-family:'Gowun Dodum',sans-serif;font-size:18px;line-height:1.6;white-space:pre-wrap}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:18px}
+table.t th{background:#e0f2fe;padding:8px;font-weight:normal}
+table.t td{padding:6px;border-bottom:1px solid #e2e8f0;text-align:center}
+table.t input{width:100%;max-width:120px;font-size:18px;padding:5px 6px;border:2px solid #bae6fd;border-radius:10px;text-align:center}
+table.t input:disabled{background:#f8fafc;border-color:#e2e8f0}
+td.ok input{border-color:#10b981;background:#f0fdf4}
+td.no input{border-color:#fb7185;background:#fff1f2}
+/* 줄무늬 */
+.strips{display:flex;gap:6px;justify-content:center;margin:14px 0 4px}
+.strip{width:74px;height:170px;border:3px dashed #94a3b8;border-radius:10px;background:#fff;font-size:26px;color:#475569;display:flex;align-items:center;justify-content:center}
+.strip.N{background:#6b4a3a;color:#fff;border:3px solid #6b4a3a}
+.strip.R{background:#f6e3c6;color:#7c5a3a;border:3px solid #e8cfa6}
+.strip.ridge{outline:4px solid #f97316;outline-offset:2px}
+.strip.wrong{box-shadow:0 0 0 5px #fb7185}
+.strip:disabled{cursor:default}
+.legend{display:flex;gap:16px;justify-content:center;font-size:17px;margin-top:6px}
+.sw{display:inline-block;width:22px;height:22px;border-radius:6px;vertical-align:middle;margin-right:6px}
+.flow div{font-size:20px;line-height:1.5;padding:10px 12px;border-radius:14px;background:#f0f9ff;margin-bottom:10px;display:flex;gap:10px;align-items:flex-start}
+.flow b{color:#0369a1}
+.fn{background:#f97316;color:#fff;border-radius:50%;min-width:30px;height:30px;line-height:30px;text-align:center;font-size:17px}
+.timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media(max-width:900px){.timeline{grid-template-columns:1fr 1fr}}
+.tl{background:#fff;border-radius:18px;padding:14px;box-shadow:0 6px 0 #cbe7f7;text-align:center}
+.tl .yr{font-size:17px;color:#64748b}
+.tl .nm{font-size:23px;color:#0369a1;margin:4px 0}
+.tl .who{font-size:16px;color:#64748b;margin-bottom:6px}
+.tl .ok{font-size:17px;color:#059669}.tl .no{font-size:17px;color:#e11d48}
+#qbtn{position:fixed;right:18px;bottom:18px;z-index:20;border:none;background:#fbbf24;color:#334155;border-radius:999px;padding:14px 22px;font-size:21px;box-shadow:0 6px 0 #d97706}
+#qbtn .c{background:#fff;border-radius:999px;padding:0 9px;margin-left:6px;font-size:17px}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:30;padding:16px}
+.modal.on{display:flex}
+.modal .card{width:min(620px,100%);max-height:90vh;overflow:auto}
+.qitem{background:#fffbeb;border-radius:14px;padding:8px 12px;margin:6px 0;font-family:'Gowun Dodum',sans-serif;font-size:16px}
+.qitem small{font-family:'Jua',sans-serif;color:#92400e;margin-right:6px}
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:999px;font-size:17px;z-index:40;display:none}
+.reset{border:none;background:none;color:#94a3b8;font-size:14px;text-decoration:underline}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.ro div{background:#f0f9ff;border-radius:14px;padding:8px 14px;text-align:center;min-width:120px}
+.ro b{display:block;font-size:26px;color:#0f172a;font-weight:normal}
+.ro span{font-size:14px;color:#64748b}
+</style>
+</head>
+<body>
+
+<section id="start" class="screen on">
+  <div style="font-size:72px">🌊</div>
+  <h1 class="title">바다 밑에 남은 흔적</h1>
+  <p class="sub">바다 밑을 재고, 지도를 읽고, 대륙이 움직이는 까닭을 찾아요</p>
+  <div class="card" style="width:min(460px,100%)">
+    <div class="grid2">
+      <div><label class="lab">반</label><select id="inCls" class="inp"></select></div>
+      <div><label class="lab">번호</label><input id="inNum" class="inp" type="number" min="1" max="40" inputmode="numeric"></div>
+    </div>
+    <label class="lab">이름</label><input id="inName" class="inp" maxlength="10">
+    <div style="margin-top:18px"><button id="goBtn" class="big blue">시작하기</button></div>
+    <p id="startMsg" class="fb no"></p>
+  </div>
+</section>
+
+<div id="pv" style="position:sticky;top:0;z-index:25;background:#0c4a6e;color:#fff;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;font-size:17px">
+  <span>🧪 연습용 미리보기 · 모든 단계가 열려 있고, 답은 저장되지 않아요</span>
+  <button class="big sm green" id="pvSim" style="font-size:15px;padding:6px 14px">⑥ 시뮬레이터 바로 보기</button>
+  <button class="big sm gray" id="pvReset" style="font-size:15px;padding:6px 14px">처음부터</button>
+</div>
+<section id="main" class="screen">
+  <div class="top"><span class="pill" id="who"></span><span class="save" id="saveState"></span></div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="wrap">
+
+    <!-- 1 처음 생각 -->
+    <div class="stage" data-st="1">
+      <h2>① 지난 시간에 남은 질문</h2>
+      <div class="two">
+        <div class="card box"><img class="photo" src="holmes.jpg" alt="홈스의 맨틀 대류설 모형"></div>
+        <div>
+          <div class="recall read">지난 시간: 홈스는 맨틀 대류로 대륙이 움직인다고 설명했지만, 그때는 <b>확인할 방법이 없었어요.</b></div>
+          <div class="card box">
+            <h3>홈스의 맨틀 대류가 맞다면, 바다 밑에는 어떤 흔적이 남아 있을까?</h3>
+            <label class="lab">처음 생각</label>
+            <textarea class="inp" id="s1idea" placeholder="맨틀이 올라오는 곳에는 … / 내려가는 곳에는 …"></textarea>
+            <div class="lockrow"><button class="big sm" id="s1lock">저장하고 잠그기 🔒</button><span class="lockmsg">수업 끝에 다시 볼 거예요.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 바다 밑 재기 -->
+    <div class="stage" data-st="2">
+      <h2>② 바다 밑 재기</h2>
+      <div class="two">
+        <div class="card box">
+          <canvas id="sonar" width="900" height="420"></canvas>
+          <div class="ctl">
+            <span class="lockmsg">배 위치:</span>
+            <div class="chips" id="sonarPts"></div>
+            <button class="big sm blue" id="pingBtn">음파 보내기 📡</button>
+          </div>
+          <div class="ro"><div><b id="tOut">-</b><span>돌아오는 데 걸린 시간</span></div></div>
+        </div>
+        <div>
+          <div class="concept">
+            <span class="tag">음향 측심법 (1950~60년대)</span>
+            <p>배에서 음파를 쏘고, 해저에서 반사되어 돌아오는 <b>시간</b>을 재요.</p>
+            <p>바닷물 속 음파의 속력은 약 <b>1500 m/s</b></p>
+            <div class="formula">수심 = 1500 × 시간 ÷ 2</div>
+            <p class="read" style="font-size:16px">왜 2로 나눌까? 음파는 바닥까지 갔다가 다시 올라와요.</p>
+          </div>
+          <div class="card box">
+            <table class="t" id="sonarTbl"><tr><th>위치</th><th>시간 (s)</th><th>수심 (m)</th></tr></table>
+            <p class="fb" id="s2fb"></p>
+          </div>
+        </div>
+      </div>
+      <div class="card box">
+        <label class="lab">네 곳의 수심을 비교하면, 바다 밑은 어떤 모습일까?</label>
+        <textarea class="inp" id="s2shape"></textarea>
+        <div class="lockrow"><button class="big sm" id="s2lock">저장하고 잠그기 🔒</button></div>
+      </div>
+    </div>
+
+    <!-- 3 해저 지형 -->
+    <div class="stage" data-st="3">
+      <h2>③ 해저 지형</h2>
+      <div class="card box"><img class="photo" src="seafloor.jpg" alt="해저 지형 모식도"></div>
+      <div class="two">
+        <div>
+          <div class="concept"><span class="tag">대륙 쪽</span>
+            <p><b>대륙붕</b>: 육지와 이어진 얕고 완만한 곳</p>
+            <p><b>대륙 사면</b>: 대륙붕 끝에서 급하게 깊어지는 곳</p>
+            <p><b>대륙대</b>: 대륙 사면에서 심해저 평원으로 이어지는 완만한 곳</p>
+          </div>
+          <div class="concept y"><span class="tag">깊은 바다</span>
+            <p><b>심해저 평원</b>: 수심 약 3~6 km의 평탄한 곳</p>
+            <p><b>해산</b>: 심해저 평원에 솟은 산 (꼭대기가 평평하면 평정해산)</p>
+          </div>
+        </div>
+        <div>
+          <div class="concept r"><span class="tag">오늘 주인공</span>
+            <p><b>해령</b>: 심해저에서 2.5~3 km 높이로 솟은 대규모 해저 산맥</p>
+            <p><b>열곡</b>: 해령 한가운데 V자 모양으로 갈라진 골짜기</p>
+            <p><b>해구</b>: 수심 6 km 이상인 좁고 긴 골짜기</p>
+          </div>
+          <div class="card box">
+            <label class="lab">②에서 잰 C(2400 m)는 주변(4500 m)보다 높아요. 어떤 지형일까?</label>
+            <div class="chips" id="s3c"></div>
+            <label class="lab">D(7800 m)는 어떤 지형일까?</label>
+            <div class="chips" id="s3d"></div>
+            <p class="fb" id="s3fb"></p>
+            <div class="lockrow"><button class="big sm" id="s3lock">저장하고 잠그기 🔒</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 해령 주변 자료 -->
+    <div class="stage" data-st="4">
+      <h2>④ 해령 주변 자료 읽기</h2>
+      <div class="recall read">②, ③에서 바다 한가운데 솟은 <b>해령</b>을 찾았어요. 해령 주변의 해양 지각을 더 조사해 봐요.</div>
+      <div class="card box"><img class="photo" src="agemap.jpg" alt="해양 지각의 나이 지도"><p class="cap">해양 지각의 나이: 빨간색일수록 젊고, 파란색일수록 오래됨</p></div>
+      <div class="two">
+        <div class="card box"><h3>해양 지각의 나이</h3><canvas id="dAge" width="600" height="360"></canvas></div>
+        <div class="card box"><h3>해저 퇴적물의 두께</h3><canvas id="dSed" width="600" height="360"></canvas></div>
+      </div>
+      <p class="cap" style="text-align:center;margin:-8px 0 14px">대서양 해령을 가로질러 조사한 결과를 단순화한 자료예요.</p>
+      <div class="two">
+        <div class="card box">
+          <label class="lab">ⓐ 해령에서 멀어질수록 해양 지각의 나이는?</label>
+          <div class="chips" id="s4a"></div>
+          <label class="lab">ⓑ 해령에서 멀어질수록 퇴적물의 두께는?</label>
+          <div class="chips" id="s4b"></div>
+          <label class="lab">ⓒ 해령 왼쪽과 오른쪽을 비교하면?</label>
+          <input class="inp" id="s4c">
+          <p class="fb" id="s4fb"></p>
+        </div>
+        <div class="card box">
+          <h3>추론하기</h3>
+          <label class="lab">ⓓ 해령에서는 무슨 일이 일어나고 있을까?</label>
+          <textarea class="inp" id="s4d" placeholder="해령에서 가장 젊고 퇴적물이 얇은 까닭은 …"></textarea>
+          <label class="lab">자료를 보고 생긴 궁금증</label>
+          <input class="inp" id="s4q" placeholder="왜 …일까?">
+          <div class="lockrow"><button class="big sm" id="s4lock">저장하고 질문 보내기 🔒</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 해양저 확장설 -->
+    <div class="stage" data-st="5">
+      <h2>⑤ 해양저 확장설</h2>
+      <div class="concept r">
+        <span class="tag">1960년대 초 · 헤스와 디츠</span>
+        <p style="font-size:28px;color:#0f172a">해양저 확장설</p>
+        <p>해양 지각은 <b>해령에서 새로 만들어지고</b>, 양쪽으로 넓어지다가 <b>해구에서 사라진다.</b></p>
+      </div>
+      <div class="two">
+        <div class="card box"><img class="photo" src="theory.jpg" alt="해령 아래에서 맨틀 물질이 올라오는 모습"><p class="cap">해령 아래로 뜨거운 맨틀 물질이 올라와요</p></div>
+        <div class="card box">
+          <div class="flow">
+            <div><span class="fn">1</span><span>해령 아래로 <b>뜨거운 맨틀 물질이 올라온다</b></span></div>
+            <div><span class="fn">2</span><span>식어 굳으면서 <b>새로운 해양 지각</b>이 된다</span></div>
+            <div><span class="fn">3</span><span>새 지각이 생길 때마다 먼저 생긴 지각은 <b>해령 양쪽으로 밀려난다</b></span></div>
+            <div><span class="fn">4</span><span>해구에서 해양 지각이 <b>맨틀 속으로 들어가 사라진다</b></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card box">
+        <h3>해령에서 해구까지</h3>
+        <canvas id="sp5" width="1000" height="330"></canvas>
+        <div class="ctl"><button class="big sm blue" id="sp5Play">⏸ 멈춤</button>
+          <span class="legend" style="margin:0"><span><i class="sw" style="background:linear-gradient(90deg,#ef4444,#facc15,#22c55e,#3b82f6)"></i>지각의 나이 (젊음 → 오래됨)</span><span><i class="sw" style="background:#d6b98c"></i>퇴적물</span><span><i class="sw" style="background:#fff;border:2px solid #334155"></i>같은 때 생긴 지각 표시</span></span></div>
+      </div>
+      <div class="two">
+        <div class="card box">
+          <label class="lab">ⓐ 이 이론으로 ④의 <b>나이</b> 규칙을 설명하면?</label>
+          <textarea class="inp" id="s5a"></textarea>
+          <label class="lab">ⓑ 이 이론으로 ④의 <b>퇴적물 두께</b> 규칙을 설명하면?</label>
+          <textarea class="inp" id="s5b"></textarea>
+          <label class="lab">ⓒ 바다에서 약 2억 년보다 오래된 해양 지각이 발견되지 않는 까닭은?</label>
+          <div class="chips" id="s5old"></div>
+          <p class="fb" id="s5fb"></p>
+        </div>
+        <div class="card box">
+          <label class="lab">④에서 쓴 내 추론</label>
+          <div class="mine" id="s5mine"></div>
+          <label class="lab">ⓓ 내 추론과 해양저 확장설은 어떻게 같고 다른가?</label>
+          <textarea class="inp" id="s5cmp"></textarea>
+          <div class="lockrow"><button class="big sm" id="s5lock">저장하고 잠그기 🔒</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 고지자기 줄무늬 -->
+    <div class="stage" data-st="6">
+      <h2>⑥ 고지자기 줄무늬 · 또 하나의 증거</h2>
+      <div class="two">
+        <div class="card box"><img class="photo" src="field.jpg" alt="지구 자기장"><p class="cap">지구 자기장: 지구 안에 큰 자석이 있는 것처럼 보여요</p></div>
+        <div>
+          <div class="card box"><img class="photo" src="remanent.png" alt="잔류 자기의 형성 과정"></div>
+          <div class="concept p"><span class="tag">고지자기</span>
+            <p>마그마가 식어 굳을 때, 자성 광물이 <b>그때의 지구 자기장 방향</b>으로 정렬된 채 굳어요.</p>
+            <p>지구 자기장은 방향이 여러 번 바뀌어 왔어요. <b>정자극기</b>: 지금과 같은 방향 · <b>역자극기</b>: 지금과 반대 방향</p>
+          </div>
+        </div>
+      </div>
+      <div class="concept g"><span class="tag">해양저 확장설이 맞다면</span>
+        <p>해령에서 굳은 지각마다 그때의 자기장이 기록되고, 양쪽으로 밀려나면서 <b>해령을 중심으로 대칭인 줄무늬</b>가 생겨야 해요. 시뮬레이터로 확인해 봐요.</p>
+      </div>
+      <div id="s6rev">
+        <div class="card box">
+          <h3>고지자기 줄무늬 시뮬레이터</h3>
+          <div class="ctl">
+            <div class="chips" id="pmView"></div>
+            <button class="big sm blue" id="pmPlay">▶ 재생</button>
+            <button class="big sm gray" id="pmReset">처음부터</button>
+            <button class="big sm gray" id="pmFast">빠르게 ×1</button>
+          </div>
+          <div class="ctl">
+            <span class="lockmsg">확장 속도 (한쪽)</span>
+            <input type="range" id="pmRate" min="1" max="10" step="1" value="5" style="width:200px;margin:0">
+            <b id="pmRateOut" style="font-size:20px;min-width:90px">5 cm/년</b>
+            <span class="lockmsg" style="margin-left:8px">자기장 역전</span>
+            <div class="chips" id="pmMode"></div>
+            <button class="big sm" id="pmFlip">지금 자기장 뒤집기</button>
+            <button class="big sm green" id="pmShip">🚢 탐사선 띄우기</button>
+          </div>
+          <canvas id="pm" width="1000" height="460" style="margin-top:10px;cursor:crosshair"></canvas>
+          <div class="legend" style="flex-wrap:wrap">
+            <span><i class="sw" style="background:#6b4a3a"></i>정자극기에 생긴 지각</span>
+            <span><i class="sw" style="background:#f6e3c6;border:1px solid #e8cfa6"></i>역자극기에 생긴 지각</span>
+            <span><i class="sw" style="background:#f97316"></i>아직 식지 않은 지각</span>
+            <span><i class="sw" style="background:#cbd5e1"></i>관찰 시작 전에 생긴 지각</span>
+            <span><i class="sw" style="background:#facc15"></i>노란 화살표: 기록된 자기장 방향</span>
+          </div>
+          <div class="ro" id="pmPick"><div><b id="pkD">-</b><span>해령에서 거리</span></div><div><b id="pkA">-</b><span>지각의 나이</span></div><div><b id="pkP">-</b><span>기록된 자기장</span></div><div style="flex:1;text-align:left;background:none"><span class="read" style="font-size:16px">지각을 눌러 보세요</span></div></div>
+          <h3 style="margin-top:14px">해수면에서 측정한 지자기 이상</h3>
+          <canvas id="pmG" width="1000" height="180"></canvas>
+          <p class="read" style="font-size:15px;color:#64748b">정자극기 지각 위에서는 자기장이 조금 강하게(+), 역자극기 지각 위에서는 조금 약하게(−) 측정돼요.</p>
+        </div>
+        <div class="two">
+          <div class="card box"><img class="photo" src="stripes.jpg" alt="대서양 중앙 해령의 고지자기 줄무늬"><p class="cap">실제 대서양 중앙 해령</p></div>
+          <div class="card box">
+            <label class="lab">ⓐ 줄무늬가 해령을 중심으로 대칭인 까닭은?</label>
+            <textarea class="inp" id="s6why"></textarea>
+            <label class="lab">ⓑ 확장 속도를 2 cm/년, 8 cm/년으로 바꿔 보면 줄무늬 폭은 어떻게 달라질까? 그 까닭은?</label>
+            <textarea class="inp" id="s6speed"></textarea>
+            <label class="lab">ⓒ 한쪽 5 cm/년으로 넓어진다면, 해령에서 100 km 떨어진 지각의 나이는? 계산한 뒤 시뮬레이터에서 눌러 확인해요.</label>
+            <div class="ctl" style="margin-top:0"><input class="inp" id="s6age" inputmode="numeric" style="width:140px"> <span style="font-size:19px">만 년</span> <span class="fb" id="s6agefb" style="margin:0 0 0 8px"></span></div>
+            <label class="lab">ⓓ [단면] 보기에서 해령에서 멀어질수록 수심과 퇴적물 두께는?</label>
+            <textarea class="inp" id="s6sec"></textarea>
+            <div class="lockrow"><button class="big sm green" id="s6lock2">저장하고 잠그기 🔒</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7 지각 열류량 -->
+    <div class="stage" data-st="7">
+      <h2>⑦ 지각 열류량</h2>
+      <div class="two">
+        <div class="card box"><img class="photo" src="heatflow.jpg" alt="지각 열류량 분포"><p class="cap">지각 열류량: 지구 내부에서 지표로 빠져나오는 열의 양 (mW/m²)</p></div>
+        <div>
+          <div class="card box">
+            <label class="lab">열류량이 가장 높은 곳(빨강)은 해저 지형의 어디와 겹칠까?</label>
+            <div class="chips" id="s7pick"></div>
+            <p class="fb" id="s7fb"></p>
+          </div>
+          <div class="lens"><div class="lt">상호작용 렌즈</div><div class="lq">그곳에서 무엇과 무엇이 영향을 주고받고 있을까?</div></div>
+          <div class="card box">
+            <textarea class="inp" id="s7lens" placeholder="(   )와 (   )이 …"></textarea>
+            <div class="lockrow"><button class="big sm" id="s7lock">저장하고 잠그기 🔒</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 섭입대와 변환 단층 -->
+    <div class="stage" data-st="8">
+      <h2>⑧ 섭입대와 변환 단층</h2>
+      <div class="two">
+        <div>
+          <div class="card box"><img class="photo" src="subduction.jpg" alt="섭입대"></div>
+          <div class="concept r"><span class="tag">섭입대</span>
+            <p>해구에서 해양 지각이 맨틀 속으로 비스듬히 들어가는 곳</p>
+            <p>이 경사면을 따라 <b>지진</b>이 일어나요.</p>
+          </div>
+          <div class="card box">
+            <label class="lab">해구에서 대륙 쪽으로 갈수록 지진이 일어나는 깊이는?</label>
+            <div class="chips" id="s8a"></div>
+            <p class="fb" id="s8afb"></p>
+          </div>
+        </div>
+        <div>
+          <div class="card box"><img class="photo" src="transform.jpg" alt="변환 단층"></div>
+          <div class="concept p"><span class="tag">변환 단층</span>
+            <p>해령과 해령 사이를 끊어 놓은 단층</p>
+            <p>해령마다 지각이 생겨 밀려나는 속도가 달라서 생겨요.</p>
+          </div>
+          <div class="card box">
+            <label class="lab">변환 단층에서 양쪽 지각이 <b>반대 방향</b>으로 움직이는 구간은?</label>
+            <div class="chips" id="s8b"></div>
+            <p class="fb" id="s8bfb"></p>
+          </div>
+        </div>
+      </div>
+      <div class="card box">
+        <label class="lab">섭입대와 변환 단층은 해양저 확장설의 어떤 부분을 뒷받침할까?</label>
+        <textarea class="inp" id="s8why"></textarea>
+        <div class="lockrow"><button class="big sm" id="s8lock">저장하고 잠그기 🔒</button></div>
+      </div>
+    </div>
+
+    <!-- 9 처음 생각과 나중 생각 -->
+    <div class="stage" data-st="9">
+      <h2>⑨ 처음 생각과 나중 생각</h2>
+      <div class="timeline box">
+        <div class="tl"><div class="yr">1915</div><div class="nm">대륙 이동설</div><div class="who">베게너</div><div class="ok">증거 ○</div><div class="no">원동력 ✕</div></div>
+        <div class="tl"><div class="yr">1920년대</div><div class="nm">맨틀 대류설</div><div class="who">홈스</div><div class="ok">원동력 ○</div><div class="no">증거 ✕</div></div>
+        <div class="tl"><div class="yr">1960년대 초</div><div class="nm">해양저 확장설</div><div class="who">헤스 · 디츠</div><div class="ok">해저 탐사로 증거 ○</div></div>
+        <div class="tl"><div class="yr">1968</div><div class="nm">판 구조론</div><div class="who">여러 과학자</div><div class="ok">하나의 이론으로</div></div>
+      </div>
+      <div class="two">
+        <div class="card box">
+          <h3>홈스의 맨틀 대류가 맞다면, 바다 밑에는 어떤 흔적이 남아 있을까?</h3>
+          <label class="lab">처음 생각</label>
+          <div class="mine" id="s9first"></div>
+          <label class="lab">나중 생각 (오늘 본 증거를 넣어서)</label>
+          <textarea class="inp" id="s9now"></textarea>
+        </div>
+        <div>
+          <div class="lens"><div class="lt">상호작용 렌즈</div><div class="lq">해령과 해구에서 맨틀과 해양 지각은 어떤 영향을 주고받을까?</div></div>
+          <div class="card box">
+            <label class="lab">해령에서는</label><input class="inp" id="s9r">
+            <label class="lab">해구에서는</label><input class="inp" id="s9t">
+            <div class="lockrow"><button class="big sm green" id="s9lock">저장하고 잠그기 🔒</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="waiting" id="waitMsg" style="display:none">🔒 아직 열리지 않았어요</div>
+    <div style="text-align:center;margin-top:30px"><button class="reset" id="resetBtn">이 기기에서 처음부터 다시 시작하기</button></div>
+  </div>
+</section>
+
+<button id="qbtn" style="display:none">❓ 질문 만들기<span class="c" id="qcount">0</span></button>
+<div class="modal" id="qmodal">
+  <div class="card">
+    <h3>궁금한 것을 질문으로 남겨요</h3>
+    <div class="chips" id="qtags"></div>
+    <textarea class="inp" id="qtext" placeholder="예) 해령은 왜 바다 한가운데 있을까?"></textarea>
+    <div class="lockrow"><button class="big sm" id="qsave">질문 보내기</button><button class="big sm blue" id="qclose">닫기</button></div>
+    <h3 style="margin-top:16px">내가 만든 질문</h3>
+    <div id="qlist"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== Firebase 설정 ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyCmdo6XSf8Hu62aPZezynd9WoEMsj5mc5M",
+  authDomain: "cloud-9e6ad.firebaseapp.com",
+  projectId: "cloud-9e6ad"
+};
+const COL = 'seafloor', CTRL = 'seafloor_ctrl';
+const NSTAGE = 9;
+const FS = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents`;
+const SKEY = 'seafloor_student_' + firebaseConfig.projectId;
+
+/* ===== 자료 ===== */
+const V = 1500;
+const SONAR = [
+  { id: 'A', x: 0.08, t: 0.4 },
+  { id: 'B', x: 0.33, t: 6.0 },
+  { id: 'C', x: 0.545, t: 3.2 },
+  { id: 'D', x: 0.86, t: 10.4 }
+];
+function depthOf(t){ return V * t / 2; }
+const S3C = ['대륙붕', '해산', '해령', '해구'], S3D = ['대륙붕', '심해저 평원', '해령', '해구'];
+const S7 = ['해령', '해구', '대륙 한가운데'];
+const S8A = ['얕아진다', '깊어진다', '변화 없다'];
+const S8B = ['해령과 해령 사이', '해령 바깥쪽 전체', '해령 꼭대기'];
+const S4A = ['많아진다', '적어진다', '변화 없다'], S4B = ['두꺼워진다', '얇아진다', '변화 없다'];
+const S5OLD = ['해구에서 맨틀 속으로 들어가 사라져서', '해령에서 다시 녹아 없어져서', '두꺼운 퇴적물에 덮여 보이지 않아서'];
+const TAGS = ['왜?', '만약 ~라면?', '어떻게?', '기타'];
+const NAMES = ['처음 생각', '바다 밑 재기', '해저 지형', '해령 주변 자료', '해양저 확장설', '고지자기 줄무늬', '지각 열류량', '섭입대와 변환 단층', '나중 생각'];
+
+/* ===== 상태 ===== */
+function blank(){
+  return {
+    s1: { idea: '', locked: false },
+    s2: { d: {}, shape: '', locked: false },
+    s3: { c: '', d: '', locked: false },
+    s4: { a: '', b: '', c: '', d: '', q: '', locked: false },
+    s5: { a: '', b: '', old: '', cmp: '', locked: false },
+    s6: { why: '', speed: '', age: '', sec: '', locked: false },
+    s7: { pick: '', lens: '', locked: false },
+    s8: { a: '', b: '', why: '', locked: false },
+    s9: { now: '', r: '', t: '', locked: false },
+    qs: []
+  };
+}
+let S = blank();
+let ME = null, AUTH = null;
+let STAGE = 1, VIEW = 1;
+
+function store(){ try { localStorage.setItem(SKEY, JSON.stringify({ AUTH, ME })); } catch (e) {} }
+function load(){ try { return JSON.parse(localStorage.getItem(SKEY) || 'null'); } catch (e) { return null; } }
+
+/* ===== 인증·저장 (REST) ===== */
+async function signUpAnon(){
+  const r = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebaseConfig.apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ returnSecureToken: true }) });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error && j.error.message || 'auth');
+  AUTH = { idToken: j.idToken, refreshToken: j.refreshToken, uid: j.localId, exp: Date.now() + (Number(j.expiresIn) - 120) * 1000 };
+}
+async function token(){
+  if (AUTH && Date.now() < AUTH.exp) return AUTH.idToken;
+  const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${firebaseConfig.apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(AUTH.refreshToken) });
+  const j = await r.json();
+  if (!r.ok) throw new Error('refresh');
+  AUTH = { idToken: j.id_token, refreshToken: j.refresh_token, uid: j.user_id, exp: Date.now() + (Number(j.expires_in) - 120) * 1000 };
+  store();
+  return AUTH.idToken;
+}
+async function fsGet(path){
+  const t = await token();
+  const r = await fetch(`${FS}/${path}`, { headers: { Authorization: 'Bearer ' + t } });
+  if (r.status === 404) return null;
+  if (!r.ok) throw new Error('get ' + r.status);
+  return r.json();
+}
+async function fsPatch(path, fields){
+  const t = await token();
+  const r = await fetch(`${FS}/${path}`, { method: 'PATCH', headers: { Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: JSON.stringify({ fields }) });
+  if (!r.ok) throw new Error('patch ' + r.status);
+  return r.json();
+}
+function maxStageReached(){
+  const L = [S.s1.locked, S.s2.locked, S.s3.locked, S.s4.locked, S.s5.locked, S.s6.locked, S.s7.locked, S.s8.locked, S.s9.locked];
+  let m = 1; for (let i = 0; i < L.length; i++) { if (L[i]) m = i + 2; else break; }
+  return m;
+}
+let saveTimer = null, saving = false, dirty = false;
+function setSave(t){ const el = document.getElementById('saveState'); if (el) el.textContent = t; }
+function queueSave(){ dirty = true; setSave('저장 중…'); clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 900); }
+async function saveNow(){
+  if (!AUTH || !ME) return;
+  if (saving) { clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 600); return; }
+  saving = true; dirty = false;
+  try {
+    await fsPatch(`${COL}/${AUTH.uid}`, {
+      name: { stringValue: ME.name }, cls: { stringValue: String(ME.cls) }, num: { integerValue: String(ME.num) },
+      done: { integerValue: String(maxStageReached()) },
+      data: { stringValue: JSON.stringify(S) }, updated: { integerValue: String(Date.now()) }
+    });
+    setSave(dirty ? '저장 중…' : '저장됨 ✓');
+  } catch (e) { setSave('저장 실패 · 다시 시도할게요'); dirty = true; clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 4000); }
+  saving = false;
+}
+async function pollCtrl(){
+  try {
+    const d = await fsGet(`${CTRL}/state`);
+    const s = d && d.fields && d.fields.stage ? Number(d.fields.stage.integerValue) : 1;
+    if (s !== STAGE) { const up = s > STAGE; STAGE = s; renderTabs(); if (up) { toast(`${s}단계가 열렸어요`); go(s); } else if (VIEW > STAGE) go(STAGE); }
+  } catch (e) {}
+}
+
+/* ===== 화면 도구 ===== */
+const $ = id => document.getElementById(id);
+function toast(t){ const el = $('toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => el.style.display = 'none', 2200); }
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function num(v){ if (v === undefined || v === null) return NaN; const s = String(v).trim().replace(/[\s,]/g, ''); if (s === '') return NaN; return Number(s); }
+function renderTabs(){
+  const nav = $('tabs'); nav.innerHTML = '';
+  for (let i = 1; i <= NSTAGE; i++) {
+    const b = document.createElement('button');
+    b.className = 'tab' + (i === VIEW ? ' on' : '') + (i > STAGE ? ' lock' : '');
+    b.innerHTML = `<span class="n">${i > STAGE ? '🔒' : i}</span>${NAMES[i - 1]}`;
+    b.onclick = () => { if (i <= STAGE) go(i); else toast('아직 열리지 않았어요'); };
+    nav.appendChild(b);
+  }
+}
+function go(i){
+  VIEW = i; renderTabs();
+  document.querySelectorAll('.stage').forEach(s => s.classList.toggle('on', Number(s.dataset.st) === i && i <= STAGE));
+  $('waitMsg').style.display = i > STAGE ? 'block' : 'none';
+  if (i === 2) drawSonar();
+  if (i === 4) { drawData('age'); drawData('sed'); }
+  if (i === 5) { $('s5mine').textContent = S.s4.d || '(아직 쓰지 않았어요)'; SP5.start(); } else SP5.stop();
+  if (i === 6) { PM.draw(); PM.drawGraph(); }
+  if (i === 9) $('s9first').textContent = S.s1.idea || '(아직 쓰지 않았어요)';
+  window.scrollTo({ top: 0 });
+}
+function bindText(id, obj, key){
+  const el = $(id);
+  el.value = obj()[key] || '';
+  el.addEventListener('input', () => { obj()[key] = el.value; queueSave(); });
+  return el;
+}
+function lockFields(ids, on){ ids.forEach(id => { const el = $(id); if (el) el.disabled = on; }); }
+function lockBtn(id, locked, txt){ const b = $(id); b.disabled = locked; b.textContent = locked ? '잠금 완료 🔒' : (txt || '저장하고 잠그기 🔒'); }
+function filled(...v){ return v.every(x => String(x || '').trim()); }
+function choiceChips(boxId, opts, getV, setV, isLocked, ans){
+  const box = $(boxId); box.innerHTML = '';
+  opts.forEach(o => {
+    const b = document.createElement('button'); b.className = 'chip'; b.textContent = o;
+    b.onclick = () => { if (isLocked()) return; setV(o); paintChips(boxId, getV(), isLocked(), ans); queueSave(); };
+    box.appendChild(b);
+  });
+  paintChips(boxId, getV(), isLocked(), ans);
+}
+function paintChips(boxId, v, locked, ans){
+  $(boxId).querySelectorAll('.chip').forEach(b => {
+    b.disabled = locked;
+    b.className = 'chip';
+    if (b.textContent === v) b.classList.add(locked && ans ? (v === ans ? 'ok' : 'no') : 'on');
+    if (locked && ans && b.textContent === ans && v !== ans) b.classList.add('ok');
+  });
+}
+function hiDPI(cv){ const r = window.devicePixelRatio || 1; const w = cv.width, h = cv.height; if (!cv._hd) { cv._hd = 1; cv._w = w; cv._h = h; cv.width = w * r; cv.height = h * r; } const c = cv.getContext('2d'); c.setTransform(r, 0, 0, r, 0, 0); return c; }
+
+/* ===== 1 ===== */
+function initS1(){
+  bindText('s1idea', () => S.s1, 'idea');
+  $('s1lock').onclick = () => { if (!filled(S.s1.idea)) { toast('처음 생각을 먼저 써 봐요'); return; } S.s1.locked = true; applyS1(); saveNow(); };
+  applyS1();
+}
+function applyS1(){ lockFields(['s1idea'], S.s1.locked); lockBtn('s1lock', S.s1.locked); }
+
+/* ===== 2 음향 측심 ===== */
+let sonarSel = 'A', ping = null;
+function floorAt(x){                       // 0~1 위치의 해저 수심(m) — 화면용 모식 단면
+  const pts = [[0, 300], [0.12, 300], [0.18, 2600], [0.24, 4500], [0.45, 4500], [0.52, 3000], [0.545, 2400], [0.553, 2900], [0.562, 2400], [0.59, 3000], [0.66, 4500], [0.8, 5200], [0.86, 7800], [0.9, 3000], [0.95, 600], [1, 200]];
+  for (let i = 1; i < pts.length; i++) if (x <= pts[i][0]) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i]; return y0 + (y1 - y0) * (x - x0) / (x1 - x0); }
+  return 200;
+}
+function initS2(){
+  const box = $('sonarPts'); box.innerHTML = '';
+  SONAR.forEach(p => { const b = document.createElement('button'); b.className = 'chip'; b.textContent = p.id; b.onclick = () => { sonarSel = p.id; paintSonarPts(); $('tOut').textContent = '-'; drawSonar(); }; box.appendChild(b); });
+  paintSonarPts();
+  $('pingBtn').onclick = () => { if (ping) return; ping = { id: sonarSel, t0: performance.now() }; animPing(); };
+  const tbl = $('sonarTbl');
+  SONAR.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${p.id}</td><td id="t_${p.id}">?</td><td id="dc_${p.id}"><input id="d_${p.id}" inputmode="numeric"></td>`;
+    tbl.appendChild(tr);
+    const inp = tr.querySelector('input');
+    inp.value = S.s2.d[p.id] || '';
+    inp.addEventListener('input', () => { S.s2.d[p.id] = inp.value; queueSave(); check2(); drawSonar(); });
+  });
+  bindText('s2shape', () => S.s2, 'shape');
+  $('s2lock').onclick = () => {
+    if (check2() < SONAR.length) { toast('네 곳의 수심을 모두 맞게 구해 봐요'); return; }
+    if (!filled(S.s2.shape)) { toast('바다 밑 모습을 먼저 써 봐요'); return; }
+    S.s2.locked = true; applyS2(); saveNow();
+  };
+  S.s2.measured = S.s2.measured || {};
+  SONAR.forEach(p => { if (S.s2.measured[p.id]) $('t_' + p.id).textContent = p.t; });
+  check2(); applyS2();
+}
+function paintSonarPts(){ $('sonarPts').querySelectorAll('.chip').forEach(b => b.classList.toggle('on', b.textContent === sonarSel)); }
+function check2(){
+  let ok = 0;
+  SONAR.forEach(p => {
+    const v = num(S.s2.d[p.id]); const td = $('dc_' + p.id); if (!td) return;
+    td.className = '';
+    if (!isNaN(v)) { const good = Math.abs(v - depthOf(p.t)) <= 1; td.className = good ? 'ok' : 'no'; if (good) ok++; }
+  });
+  const fb = $('s2fb');
+  if (fb) { fb.className = 'fb ' + (ok === SONAR.length ? 'ok' : ''); fb.textContent = ok === SONAR.length ? '네 곳 모두 맞았어요 ✓' : (ok ? `${ok}곳 맞았어요` : '음파를 보내 시간을 잰 뒤 수심을 구해요'); }
+  return ok;
+}
+function applyS2(){ lockFields(['s2shape'].concat(SONAR.map(p => 'd_' + p.id)), S.s2.locked); lockBtn('s2lock', S.s2.locked); }
+function animPing(){
+  const p = SONAR.find(q => q.id === ping.id);
+  const el = (performance.now() - ping.t0) / 1000;      // 화면 애니메이션 1.6초
+  drawSonar(el / 1.6);
+  if (el < 1.6) requestAnimationFrame(animPing);
+  else {
+    S.s2.measured = S.s2.measured || {}; S.s2.measured[p.id] = true;
+    $('t_' + p.id).textContent = p.t; $('tOut').textContent = p.t + ' s';
+    ping = null; drawSonar(); queueSave();
+  }
+}
+function drawSonar(phase){
+  const cv = $('sonar'); if (!cv) return; const c = hiDPI(cv); const W = cv._w, H = cv._h;
+  const top = 60, maxD = 8500, yOf = d => top + (H - top - 10) * d / maxD;
+  c.clearRect(0, 0, W, H);
+  c.fillStyle = '#e0f2fe'; c.fillRect(0, 0, W, top);
+  const g = c.createLinearGradient(0, top, 0, H); g.addColorStop(0, '#7dd3fc'); g.addColorStop(1, '#0c4a6e');
+  c.fillStyle = g; c.fillRect(0, top, W, H - top);
+  // 해저는 보이지 않음 — 수심을 맞게 구한 곳만 점으로 드러나고, 점끼리 점선으로 이어짐
+  const got = SONAR.map(p => ({ p, v: num(S.s2.d[p.id]) })).filter(o => !isNaN(o.v) && Math.abs(o.v - depthOf(o.p.t)) <= 1).sort((a, b) => a.p.x - b.p.x);
+  if (got.length > 1) {
+    c.strokeStyle = 'rgba(253,224,71,.7)'; c.lineWidth = 3; c.setLineDash([10, 8]); c.beginPath();
+    got.forEach((o, i) => { const X = o.p.x * W, Y = yOf(o.v); i ? c.lineTo(X, Y) : c.moveTo(X, Y); }); c.stroke(); c.setLineDash([]);
+  }
+  got.forEach(o => {
+    c.fillStyle = '#fde047'; c.beginPath(); c.arc(o.p.x * W, yOf(o.v), 9, 0, 7); c.fill();
+    c.fillStyle = '#fff'; c.font = '18px Jua, sans-serif'; c.fillText(`${o.p.id} ${o.v} m`, o.p.x * W + 12, yOf(o.v) - 8);
+  });
+  c.fillStyle = 'rgba(255,255,255,.55)'; c.font = '15px Jua, sans-serif'; c.textAlign = 'right';
+  [2000, 4000, 6000, 8000].forEach(d => c.fillText(d + ' m', W - 8, yOf(d) + 5)); c.textAlign = 'left';
+  // 배
+  const sp = SONAR.find(q => q.id === sonarSel), sx = sp.x * W;
+  c.fillStyle = '#f97316'; c.beginPath(); c.moveTo(sx - 34, top - 18); c.lineTo(sx + 34, top - 18); c.lineTo(sx + 24, top); c.lineTo(sx - 24, top); c.closePath(); c.fill();
+  c.fillStyle = '#fff'; c.fillRect(sx - 10, top - 34, 20, 16);
+  c.fillStyle = '#0f172a'; c.font = '20px Jua, sans-serif'; c.textAlign = 'center'; c.fillText(sp.id, sx, top - 40); c.textAlign = 'left';
+  SONAR.forEach(p => { if (p.id !== sonarSel) { c.fillStyle = '#64748b'; c.font = '17px Jua, sans-serif'; c.fillText(p.id, p.x * W - 5, top - 12); } });
+  // 음파
+  if (phase !== undefined && ping) {
+    const fy = yOf(floorAt(sp.x)), d = fy - top;
+    const y = phase < 0.5 ? top + d * phase * 2 : fy - d * (phase - 0.5) * 2;
+    c.strokeStyle = phase < 0.5 ? '#fde047' : '#a7f3d0'; c.lineWidth = 3;
+    for (let k = 0; k < 3; k++) { c.beginPath(); c.arc(sx, y - k * 12 * (phase < 0.5 ? 1 : -1), 16 - k * 4, 0.15 * Math.PI, 0.85 * Math.PI, phase >= 0.5); c.stroke(); }
+  }
+}
+
+/* ===== 3 해저 지형 ===== */
+function initS3(){
+  choiceChips('s3c', S3C, () => S.s3.c, v => S.s3.c = v, () => S.s3.locked, '해령');
+  choiceChips('s3d', S3D, () => S.s3.d, v => S.s3.d = v, () => S.s3.locked, '해구');
+  $('s3lock').onclick = () => { if (!S.s3.c || !S.s3.d) { toast('두 문제를 모두 골라 봐요'); return; } S.s3.locked = true; applyS3(); saveNow(); };
+  applyS3();
+}
+function applyS3(){
+  paintChips('s3c', S.s3.c, S.s3.locked, '해령'); paintChips('s3d', S.s3.d, S.s3.locked, '해구'); lockBtn('s3lock', S.s3.locked);
+  const fb = $('s3fb');
+  if (S.s3.locked) { const ok = (S.s3.c === '해령') + (S.s3.d === '해구'); fb.className = 'fb ' + (ok === 2 ? 'ok' : 'no'); fb.textContent = ok === 2 ? '둘 다 맞았어요 ✓' : '초록색이 답이에요. 모식도에서 위치를 다시 찾아봐요.'; }
+  else fb.textContent = '';
+}
+
+/* ===== 4 해령 주변 자료 ===== */
+// 단순화한 자료: 한쪽 확장 속도 약 1.25 cm/년(12.5 km/백만 년), 퇴적물은 나이가 많을수록 두꺼워짐
+const D4 = (() => { const pts = []; const jit = [0.6, -0.8, 0.3, -0.4, 0.9, -0.2, 0.5, -0.7, 0.1, 0.4, -0.5, 0.8, -0.3, 0.2, -0.6];
+  [-1400, -1200, -1000, -800, -600, -400, -200, 0, 200, 400, 600, 800, 1000, 1200, 1400].forEach((x, i) => {
+    const age = Math.max(0, Math.abs(x) / 12.5 + jit[i] * 4), sed = Math.max(0, 480 * (1 - Math.exp(-Math.abs(x) / 650)) + jit[i] * 22);
+    pts.push({ x, age: Math.round(age), sed: Math.round(sed) }); });
+  return pts; })();
+const DG = { age: { cv: 'dAge', yMax: 120, yLab: '나이 (백만 년)', col: '#ef4444' }, sed: { cv: 'dSed', yMax: 500, yLab: '두께 (m)', col: '#b45309' } };
+function drawData(k){
+  const G = DG[k], cv = $(G.cv); if (!cv) return; const c = hiDPI(cv), W = cv._w, H = cv._h, B = { l: 70, r: W - 16, t: 18, b: H - 52 };
+  const X = x => B.l + (B.r - B.l) * (x + 1500) / 3000, Y = v => B.b - (B.b - B.t) * v / G.yMax;
+  c.clearRect(0, 0, W, H); c.fillStyle = '#f8fafc'; c.fillRect(B.l, B.t, B.r - B.l, B.b - B.t);
+  c.strokeStyle = '#e2e8f0'; c.lineWidth = 1;
+  for (let j = 1; j < 5; j++) { const y = B.t + (B.b - B.t) * j / 5; c.beginPath(); c.moveTo(B.l, y); c.lineTo(B.r, y); c.stroke(); }
+  c.strokeStyle = '#f97316'; c.lineWidth = 3; c.setLineDash([8, 6]); c.beginPath(); c.moveTo(X(0), B.t); c.lineTo(X(0), B.b); c.stroke(); c.setLineDash([]);
+  c.strokeStyle = '#334155'; c.lineWidth = 2; c.beginPath(); c.moveTo(B.l, B.t); c.lineTo(B.l, B.b); c.lineTo(B.r, B.b); c.stroke();
+  c.fillStyle = '#334155'; c.font = '15px Jua, sans-serif'; c.textAlign = 'center';
+  [-1500, -1000, -500, 0, 500, 1000, 1500].forEach(x => c.fillText(Math.abs(x) + '', X(x), B.b + 18));
+  c.fillText('해령', X(0), B.t - 4); c.fillText('해령으로부터의 거리 (km)', (B.l + B.r) / 2, B.b + 42);
+  c.save(); c.translate(20, (B.t + B.b) / 2); c.rotate(-Math.PI / 2); c.fillText(G.yLab, 0, 0); c.restore();
+  c.textAlign = 'right'; c.font = '13px Jua, sans-serif';
+  for (let j = 0; j <= 5; j++) { const v = G.yMax * j / 5; c.fillText(String(v), B.l - 6, Y(v) + 4); }
+  D4.forEach(p => { c.fillStyle = G.col; c.beginPath(); c.arc(X(p.x), Y(p[k]), 7, 0, 7); c.fill(); c.strokeStyle = '#fff'; c.lineWidth = 2; c.stroke(); });
+  c.textAlign = 'left';
+}
+function initS4(){
+  choiceChips('s4a', S4A, () => S.s4.a, v => S.s4.a = v, () => S.s4.locked, '많아진다');
+  choiceChips('s4b', S4B, () => S.s4.b, v => S.s4.b = v, () => S.s4.locked, '두꺼워진다');
+  ['c', 'd', 'q'].forEach(k => bindText('s4' + k, () => S.s4, k));
+  hiDPI($('dAge')); hiDPI($('dSed'));
+  $('s4lock').onclick = () => {
+    if (!S.s4.a || !S.s4.b || !filled(S.s4.c)) { toast('ⓐ, ⓑ, ⓒ를 먼저 답해 봐요'); return; }
+    if (!filled(S.s4.d)) { toast('ⓓ 추론을 먼저 써 봐요'); return; }
+    if (!filled(S.s4.q)) { toast('궁금증을 질문으로 하나 써 봐요'); return; }
+    S.s4.locked = true; S.qs.push({ t: S.s4.q.trim(), tag: '해령 자료', src: 4, at: Date.now() });
+    renderQ(); applyS4(); saveNow();
+  };
+  applyS4();
+}
+function applyS4(){
+  if (!$('s4lock')) return;
+  paintChips('s4a', S.s4.a, S.s4.locked, '많아진다'); paintChips('s4b', S.s4.b, S.s4.locked, '두꺼워진다');
+  lockFields(['s4c', 's4d', 's4q'], S.s4.locked);
+  const b = $('s4lock'); b.disabled = S.s4.locked; b.textContent = S.s4.locked ? '보냈어요 🔒' : '저장하고 질문 보내기 🔒';
+  const fb = $('s4fb');
+  if (S.s4.locked) { const ok = S.s4.a === '많아진다' && S.s4.b === '두꺼워진다'; fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.textContent = ok ? '해령에서 가장 젊고 퇴적물이 가장 얇아요 ✓' : '초록색이 자료에서 읽을 수 있는 답이에요. 그래프의 점을 다시 따라가 봐요.'; }
+  else fb.textContent = '';
+}
+
+/* ===== 5 해양저 확장설 ===== */
+function ageColor(f){ const h = 0 + 225 * Math.max(0, Math.min(1, f)); return `hsl(${h},80%,${f < 0.02 ? 50 : 55}%)`; }
+const SP5 = {
+  t: 0, run: false, last: 0, raf: 0,
+  start(){ if (this.run) return; this.run = true; this.last = performance.now(); $('sp5Play').textContent = '⏸ 멈춤'; this.loop(); },
+  stop(){ this.run = false; cancelAnimationFrame(this.raf); const b = $('sp5Play'); if (b) b.textContent = '▶ 재생'; },
+  loop(){ if (!this.run) return; const now = performance.now(); this.t += (now - this.last) / 1000; this.last = now; this.draw(); this.raf = requestAnimationFrame(() => this.loop()); },
+  draw(){
+    const cv = $('sp5'); if (!cv || !cv._w) return; const c = hiDPI(cv), W = cv._w, H = cv._h, cx = W / 2;
+    const sea = 40, top = 130, th = 34, Dt = 380, v = 26;            // Dt: 해구까지 거리(px), v: px/초
+    const Lmax = Dt + 150;
+    c.clearRect(0, 0, W, H);
+    c.fillStyle = '#bae6fd'; c.fillRect(0, sea, W, H - sea);
+    c.fillStyle = '#fdba74'; c.fillRect(0, top + th, W, H - top - th);
+    // 경로: s(px) → 위치
+    const path = (s, sgn) => s <= Dt ? [cx + sgn * s, top] : [cx + sgn * (Dt + (s - Dt) * 0.6), top + (s - Dt) * 0.8];
+    for (let s = 0; s < Lmax; s += 2) {
+      [-1, 1].forEach(sgn => {
+        const [x, y] = path(s, sgn), [x2, y2] = path(s + 2.6, sgn), f = s / Dt;
+        const sed = Math.min(26, f * 26);
+        // 지각
+        c.fillStyle = ageColor(f); c.beginPath(); c.moveTo(x, y); c.lineTo(x2, y2); c.lineTo(x2, y2 + th); c.lineTo(x, y + th); c.closePath(); c.fill();
+        // 퇴적물
+        if (s <= Dt) { c.fillStyle = '#d6b98c'; c.fillRect(Math.min(x, x2), y - sed, Math.abs(x2 - x) + 0.5, sed); }
+      });
+    }
+    // 같은 때 생긴 지각 표시 (움직이는 흰 막대)
+    const gap = 76, off = (this.t * v) % gap;
+    for (let s = off; s < Lmax; s += gap) [-1, 1].forEach(sgn => {
+      const [x, y] = path(s, sgn); c.strokeStyle = '#fff'; c.lineWidth = 3; c.beginPath(); c.moveTo(x, y + 2); c.lineTo(x + (s > Dt ? sgn * 10 : 0), y + th - 2); c.stroke();
+    });
+    // 맨틀 상승
+    c.fillStyle = 'rgba(239,68,68,.85)'; c.beginPath(); c.moveTo(cx - 70, H); c.quadraticCurveTo(cx, top + th - 4, cx + 70, H); c.fill();
+    c.strokeStyle = '#fff7ed'; c.lineWidth = 3; [-1, 1].forEach(sgn => { c.beginPath(); c.moveTo(cx + sgn * 20, H - 14); c.quadraticCurveTo(cx + sgn * 26, top + th + 26, cx + sgn * 120, top + th + 18); c.stroke(); });
+    // 해구 표시
+    c.fillStyle = '#0369a1'; c.font = '19px Jua, sans-serif'; c.textAlign = 'center';
+    [-1, 1].forEach(sgn => { c.fillText('해구', cx + sgn * (Dt + 14), top - 16); c.fillText(sgn < 0 ? '← ③ 밀려남' : '③ 밀려남 →', cx + sgn * 200, top - 40); });
+    c.fillStyle = '#dc2626'; c.fillText('해령', cx, top - 40);
+    c.font = '16px Jua, sans-serif'; c.fillStyle = '#7f1d1d'; c.fillText('① 맨틀 물질 상승', cx, H - 12);
+    c.fillStyle = '#334155'; c.fillText('② 새 지각', cx, top - 14);
+    c.fillStyle = '#fff'; c.font = '17px Jua, sans-serif'; [-1, 1].forEach(sgn => { c.fillText('④ 해구에서', cx + sgn * (Dt + 50), top + 186); c.fillText('맨틀 속으로', cx + sgn * (Dt + 50), top + 206); });
+    c.fillStyle = '#7c5a3a'; c.fillText('퇴적물', cx + 300, top - 32);
+    c.textAlign = 'left';
+  }
+};
+function initS5(){
+  ['a', 'b', 'cmp'].forEach(k => bindText('s5' + k, () => S.s5, k));
+  choiceChips('s5old', S5OLD, () => S.s5.old, v => S.s5.old = v, () => S.s5.locked, S5OLD[0]);
+  hiDPI($('sp5'));
+  $('sp5Play').onclick = () => SP5.run ? SP5.stop() : SP5.start();
+  $('s5lock').onclick = () => {
+    if (!filled(S.s5.a, S.s5.b, S.s5.cmp) || !S.s5.old) { toast('ⓐ~ⓓ를 모두 답해 봐요'); return; }
+    S.s5.locked = true; applyS5(); saveNow();
+  };
+  applyS5();
+}
+function applyS5(){
+  lockFields(['s5a', 's5b', 's5cmp'], S.s5.locked); lockBtn('s5lock', S.s5.locked);
+  paintChips('s5old', S.s5.old, S.s5.locked, S5OLD[0]);
+  const fb = $('s5fb');
+  if (S.s5.locked) { const ok = S.s5.old === S5OLD[0]; fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.textContent = ok ? '맞아요. 오래된 해양 지각은 해구에서 사라져요 ✓' : '④번 그림을 다시 봐요. 오래된 지각은 해구에서 맨틀 속으로 들어가요.'; }
+  else fb.textContent = '';
+  SP5.draw();
+}
+
+/* ===== 6 고지자기 ===== */
+function initS6(){
+  ['why', 'speed', 'age', 'sec'].forEach(k => bindText('s6' + k, () => S.s6, k));
+  $('s6age').addEventListener('input', check6age);
+  $('s6lock2').onclick = () => {
+    if (!filled(S.s6.why, S.s6.speed, S.s6.sec)) { toast('ⓐ, ⓑ, ⓓ를 모두 써 봐요'); return; }
+    if (!check6age()) { toast('ⓒ 나이를 다시 계산해 봐요'); return; }
+    S.s6.locked = true; applyS6(); saveNow();
+  };
+  PM.init();
+  applyS6();
+}
+function check6age(){
+  const v = num(S.s6.age), fb = $('s6agefb'); if (!fb) return false;
+  if (isNaN(v)) { fb.textContent = ''; return false; }
+  const ok = Math.abs(v - 200) <= 5;
+  fb.className = 'fb ' + (ok ? 'ok' : 'no');
+  fb.textContent = ok ? '맞아요 ✓ (100 km ÷ 5 cm/년 = 200만 년)' : '1 km = 100 000 cm 예요. 100 km를 5 cm/년으로 나눠 봐요.';
+  return ok;
+}
+function applyS6(){
+  lockFields(['s6why', 's6speed', 's6age', 's6sec'], S.s6.locked); lockBtn('s6lock2', S.s6.locked);
+  check6age();
+  PM.draw(); PM.drawGraph();
+}
+
+/* ===== 고지자기 줄무늬 시뮬레이터 =====
+   지각 조각(parcel): 해령에서 만들어질 때의 누적 확장 거리 s0~s1(km), 자극(N/R), 생긴 시각 tb(백만 년, 경과 시간)
+   지금 해령에서의 거리 = (지금 누적 확장 거리 − s1) ~ (지금 누적 확장 거리 − s0)  — 양쪽 대칭 */
+const GPTS = [ // 최근 약 520만 년 지자기 역전 연표 (백만 년 전, 정자극기 구간) — 단순화
+  [0, 0.78], [0.99, 1.07], [1.77, 1.95], [2.58, 3.04], [3.11, 3.22], [3.33, 3.58], [4.18, 4.29], [4.48, 4.62], [4.80, 4.89], [4.98, 5.23]
+];
+const PM = {
+  T: 5.0, R: 300, rate: 5, mode: 'real', view: 'oblique', fast: 1,
+  E: 0, Scum: 0, cur: 'R', parcels: [], flips: [], run: false, last: 0, pick: null, ship: null, anom: [],
+  realPol(ago){ return GPTS.some(([a, b]) => ago >= a && ago < b) ? 'N' : 'R'; },
+  kmPerMy(){ return this.rate * 10; },                 // 1 cm/년 = 10 km/백만 년
+  reset(){
+    this.E = 0; this.Scum = 0; this.parcels = []; this.run = false; this.pick = null; this.ship = null; this.anom = [];
+    if (this.mode === 'random') { this.flips = []; let t = 0; while (t < this.T) { t += 0.12 + Math.random() * 0.6; this.flips.push(t); } }
+    this.cur = this.mode === 'real' ? this.realPol(this.T) : 'R';
+    $('pmPlay').textContent = '▶ 재생'; this.showPick(); this.draw(); this.drawGraph();
+  },
+  polNow(){
+    if (this.mode === 'real') return this.realPol(this.T - this.E);
+    if (this.mode === 'random') { const n = this.flips.filter(f => f <= this.E).length; return n % 2 ? 'N' : 'R'; }
+    return this.cur;
+  },
+  step(dE){                                            // 시간을 dE(백만 년)만큼 진행
+    while (dE > 1e-9) {
+      const h = Math.min(dE, 0.01); dE -= h;
+      if (this.E >= this.T) { this.E = this.T; break; }
+      const pol = this.polNow(); this.cur = pol;
+      const s0 = this.Scum; this.Scum += this.kmPerMy() * h; this.E = Math.min(this.T, this.E + h);
+      const last = this.parcels[this.parcels.length - 1];
+      if (last && last.pol === pol && this.E - last.tb < 0.02) { last.s1 = this.Scum; }
+      else this.parcels.push({ s0, s1: this.Scum, pol, tb: this.E - h });
+    }
+    if (this.T - this.E < 1e-6) this.E = this.T;
+    this.cur = this.polNow();
+  },
+  at(d){                                               // 해령에서 d km(절댓값) 지점의 지각
+    d = Math.abs(d);
+    if (d >= this.Scum) return { pre: true, age: this.E + (d - this.Scum) / this.kmPerMy() };
+    for (let i = this.parcels.length - 1; i >= 0; i--) {
+      const p = this.parcels[i], dIn = this.Scum - p.s1, dOut = this.Scum - p.s0;
+      if (d >= dIn && d <= dOut) { const f = (d - dIn) / Math.max(1e-9, dOut - dIn); const tEnd = i + 1 < this.parcels.length ? this.parcels[i + 1].tb : this.E;
+        return { pre: false, pol: p.pol, age: this.E - (tEnd - (tEnd - p.tb) * f) }; }
+    }
+    return { pre: false, pol: this.cur, age: 0 };
+  },
+  runs(){                                              // 같은 자극끼리 묶은 띠 [dIn, dOut, pol, hot]
+    const out = [];
+    for (let i = this.parcels.length - 1; i >= 0; i--) {
+      const p = this.parcels[i]; const dIn = this.Scum - p.s1, dOut = Math.min(this.R + 20, this.Scum - p.s0);
+      if (dIn > this.R + 20) break;
+      const prev = out[out.length - 1];
+      if (prev && prev[2] === p.pol && Math.abs(prev[1] - dIn) < 1e-6) prev[1] = dOut; else out.push([dIn, dOut, p.pol]);
+    }
+    const hot = Math.min(this.Scum, this.kmPerMy() * 0.06);
+    return { bands: out, hot };
+  },
+  init(){
+    const v = $('pmView'); v.innerHTML = '';
+    [['oblique', '비스듬히 위에서'], ['section', '단면']].forEach(([k, t]) => { const b = document.createElement('button'); b.className = 'chip'; b.textContent = t; b.onclick = () => { this.view = k; this.paintChips(); this.draw(); }; b.dataset.k = k; v.appendChild(b); });
+    const m = $('pmMode'); m.innerHTML = '';
+    [['real', '실제 지구 기록'], ['random', '무작위']].forEach(([k, t]) => { const b = document.createElement('button'); b.className = 'chip'; b.textContent = t; b.dataset.k = k; b.onclick = () => { this.mode = k; this.paintChips(); this.reset(); }; m.appendChild(b); });
+    $('pmPlay').onclick = () => {
+      if (this.run) { this.run = false; $('pmPlay').textContent = '▶ 재생'; return; }
+      if (this.E >= this.T) this.reset();
+      this.run = true; this.last = performance.now(); $('pmPlay').textContent = '⏸ 멈춤'; this.loop();
+    };
+    $('pmReset').onclick = () => this.reset();
+    $('pmFast').onclick = () => { this.fast = this.fast === 1 ? 4 : 1; $('pmFast').textContent = '빠르게 ×' + this.fast; };
+    $('pmRate').oninput = e => { this.rate = Number(e.target.value); $('pmRateOut').textContent = this.rate + ' cm/년'; this.draw(); };
+    $('pmFlip').onclick = () => { if (this.E >= this.T) { toast('처음부터 다시 재생해 봐요'); return; } this.cur = this.polNow() === 'N' ? 'R' : 'N'; this.mode = 'manual'; this.paintChips(); this.draw(); toast('자기장을 뒤집었어요. 이제부터는 버튼으로만 바뀌어요'); };
+    $('pmShip').onclick = () => { if (this.ship) return; this.ship = { x: -this.R, t0: performance.now() }; this.anom = []; this.shipLoop(); };
+    const cv = $('pm'); hiDPI(cv);
+    cv.addEventListener('pointerdown', e => {
+      const r = cv.getBoundingClientRect(), px = (e.clientX - r.left) * cv._w / r.width, py = (e.clientY - r.top) * cv._h / r.height;
+      const d = this.view === 'oblique' ? this.invOblique(px, py) : this.invSection(px, py);
+      if (d === null) return; this.pick = d; this.showPick(); this.draw();
+    });
+    hiDPI($('pmG'));
+    this.paintChips(); this.reset();
+  },
+  paintChips(){
+    $('pmView').querySelectorAll('.chip').forEach(b => b.classList.toggle('on', b.dataset.k === this.view));
+    $('pmMode').querySelectorAll('.chip').forEach(b => b.classList.toggle('on', b.dataset.k === this.mode));
+  },
+  loop(){
+    if (!this.run) return;
+    const now = performance.now(), dt = Math.min(0.1, (now - this.last) / 1000); this.last = now;
+    this.step(dt * 0.1 * this.fast);                   // ×1: 1초에 10만 년
+    if (this.pick !== null) this.showPick();
+    this.draw();
+    if (this.E >= this.T) { this.run = false; $('pmPlay').textContent = '▶ 다시 재생'; toast('현재에 도착했어요'); return; }
+    requestAnimationFrame(() => this.loop());
+  },
+  anomAt(x){
+    let sum = 0, n = 0;
+    for (let k = -12; k <= 12; k += 2) { const c = this.at(x + k); sum += c.pre ? 0 : (c.pol === 'N' ? 1 : -1); n++; }
+    return sum / n;
+  },
+  shipLoop(){
+    if (!this.ship) return;
+    const f = Math.min(1, (performance.now() - this.ship.t0) / 4000);
+    this.ship.x = -this.R + 2 * this.R * f;
+    this.anom.push([this.ship.x, this.anomAt(this.ship.x)]);
+    this.draw(); this.drawGraph();
+    if (f >= 1) { this.ship = null; this.draw(); return; }
+    requestAnimationFrame(() => this.shipLoop());
+  },
+  showPick(){
+    if (this.pick === null) { $('pkD').textContent = '-'; $('pkA').textContent = '-'; $('pkP').textContent = '-'; return; }
+    const c = this.at(this.pick);
+    $('pkD').textContent = Math.round(Math.abs(this.pick)) + ' km';
+    if (c.pre) { $('pkA').textContent = Math.round(c.age * 100) + '만 년 이상'; $('pkP').textContent = '관찰 전'; return; }
+    $('pkA').textContent = c.age < 0.06 ? '막 생김' : `약 ${Math.round(c.age * 100)}만 년`;
+    $('pkP').textContent = c.pol === 'N' ? '정자극기' : '역자극기';
+  },
+  /* --- 비스듬히 위에서 본 화면 --- */
+  geo(){ const cv = $('pm'); return { W: cv._w, H: cv._h, cx: cv._w / 2 - 20, sx: 420 / this.R, Y0: 116, Y1: 312, shear: 90, th: 44 }; },
+  P(x, y){ const g = this.geo(); return [g.cx + x * g.sx + (1 - y) * g.shear, g.Y0 + (g.Y1 - g.Y0) * y]; },
+  invOblique(px, py){ const g = this.geo(); const y = (py - g.Y0) / (g.Y1 - g.Y0); if (y < 0 || y > 1) return null; const x = (px - g.cx - (1 - y) * g.shear) / g.sx; return Math.abs(x) <= this.R ? x : null; },
+  invSection(px){ const g = this.geo(); const x = (px - g.W / 2) / (g.sx * 1.05); return Math.abs(x) <= this.R ? x : null; },
+  color(pol, hot){ return hot ? '#f97316' : pol === 'N' ? '#6b4a3a' : '#f6e3c6'; },
+  draw(){
+    const cv = $('pm'); if (!cv || !cv._w) return; const c = hiDPI(cv); const g = this.geo();
+    c.clearRect(0, 0, g.W, g.H);
+    if (this.view === 'section') { this.drawSection(c, g); this.drawHUD(c, g); return; }
+    const R = this.R, { bands, hot } = this.runs();
+    const quad = (x0, x1, col) => { const a = this.P(x0, 0), b = this.P(x1, 0), d = this.P(x1, 1), e = this.P(x0, 1); c.fillStyle = col; c.beginPath(); c.moveTo(...a); c.lineTo(...b); c.lineTo(...d); c.lineTo(...e); c.closePath(); c.fill(); };
+    const face = (x0, x1, col) => { const a = this.P(x0, 1), b = this.P(x1, 1); c.fillStyle = col; c.fillRect(a[0], a[1], b[0] - a[0], g.th); };
+    // 맨틀
+    const fl = this.P(-R, 1), fr = this.P(R, 1);
+    const mg = c.createLinearGradient(0, g.Y1, 0, g.H); mg.addColorStop(0, '#fdba74'); mg.addColorStop(1, '#ef4444');
+    c.fillStyle = mg; c.fillRect(fl[0], g.Y1 + g.th, fr[0] - fl[0], g.H - g.Y1 - g.th - 8);
+    c.fillStyle = 'rgba(220,38,38,.75)'; c.beginPath(); const rx = this.P(0, 1)[0]; c.moveTo(rx - 80, g.H - 8); c.quadraticCurveTo(rx, g.Y1 + g.th - 6, rx + 80, g.H - 8); c.fill();
+    c.strokeStyle = '#fff7ed'; c.lineWidth = 3;
+    [-1, 1].forEach(sgn => { c.beginPath(); c.moveTo(rx + sgn * 26, g.H - 20); c.quadraticCurveTo(rx + sgn * 30, g.Y1 + g.th + 30, rx + sgn * 110, g.Y1 + g.th + 14); c.stroke(); });
+    c.fillStyle = '#7f1d1d'; c.font = '17px Jua, sans-serif'; c.textAlign = 'center'; c.fillText('맨틀 물질 상승', rx, g.H - 16);
+    // 관찰 전 지각
+    quad(-R, R, '#cbd5e1'); face(-R, R, '#94a3b8');
+    // 띠
+    bands.forEach(([d0, d1, pol]) => { const a = Math.max(0, d0), b = Math.min(R, d1); if (b <= a) return; quad(a, b, this.color(pol)); quad(-b, -a, this.color(pol)); face(a, b, this.color(pol)); face(-b, -a, this.color(pol)); });
+    if (hot > 0) { quad(-hot, hot, '#f97316'); face(-hot, hot, '#f97316'); }
+    // 테두리
+    c.strokeStyle = '#334155'; c.lineWidth = 2; c.beginPath(); c.moveTo(...this.P(-R, 0)); c.lineTo(...this.P(R, 0)); c.lineTo(...this.P(R, 1)); c.lineTo(...this.P(-R, 1)); c.closePath(); c.stroke();
+    c.strokeRect(fl[0], fl[1], fr[0] - fl[0], g.th);
+    // 해령 축
+    c.strokeStyle = '#dc2626'; c.lineWidth = 3; c.setLineDash([8, 6]); c.beginPath(); c.moveTo(...this.P(0, 0)); c.lineTo(...this.P(0, 1)); c.stroke(); c.setLineDash([]);
+    const top = this.P(0, 0); c.fillStyle = '#dc2626'; c.font = '20px Jua, sans-serif'; c.fillText('해령', top[0], top[1] - 10);
+    // 이동 화살표
+    c.fillStyle = '#0369a1'; c.font = '19px Jua, sans-serif';
+    c.fillText('← 이동', this.P(-R * 0.55, 0)[0], top[1] - 10); c.fillText('이동 →', this.P(R * 0.55, 0)[0], top[1] - 10);
+    // 기록된 자기장 (노란 화살표: 북쪽 = 뒤쪽)
+    for (let x = -R + 15; x <= R - 10; x += 30) {
+      const cc = this.at(x); if (cc.pre) continue;
+      const up = cc.pol === 'N'; const a = this.P(x, up ? 0.66 : 0.34), b = this.P(x, up ? 0.34 : 0.66);
+      c.strokeStyle = '#facc15'; c.fillStyle = '#facc15'; c.lineWidth = 3.5; c.beginPath(); c.moveTo(...a); c.lineTo(...b); c.stroke();
+      const ang = Math.atan2(b[1] - a[1], b[0] - a[0]); c.beginPath(); c.moveTo(...b); c.lineTo(b[0] - 11 * Math.cos(ang - 0.5), b[1] - 11 * Math.sin(ang - 0.5)); c.lineTo(b[0] - 11 * Math.cos(ang + 0.5), b[1] - 11 * Math.sin(ang + 0.5)); c.closePath(); c.fill();
+    }
+    // 북쪽 표시
+    const nb = this.P(R, 0); c.fillStyle = '#334155'; c.font = '16px Jua, sans-serif'; c.textAlign = 'left'; c.fillText('↖ 북', nb[0] + 6, nb[1] + 4);
+    // 거리 눈금
+    c.textAlign = 'center'; c.fillStyle = '#475569'; c.font = '14px Jua, sans-serif';
+    c.lineJoin = 'round'; for (let x = -R; x <= R; x += 100) { const q = this.P(x, 1); c.strokeStyle = '#fff'; c.lineWidth = 4; c.strokeText(Math.abs(x) + ' km', q[0], g.Y1 + g.th + 20); c.fillStyle = '#334155'; c.fillText(Math.abs(x) + ' km', q[0], g.Y1 + g.th + 20); }
+    // 선택 위치
+    if (this.pick !== null) { [this.pick].forEach(x => { const a = this.P(x, 0), b = this.P(x, 1); c.strokeStyle = '#0ea5e9'; c.lineWidth = 4; c.beginPath(); c.moveTo(...a); c.lineTo(...b); c.stroke(); }); }
+    // 탐사선
+    if (this.ship) { const s = this.P(this.ship.x, 0.5); c.font = '30px sans-serif'; c.fillText('🚢', s[0], s[1] - 4); c.strokeStyle = 'rgba(14,165,233,.8)'; c.lineWidth = 2; c.setLineDash([6, 5]); c.beginPath(); c.moveTo(...this.P(-R, 0.5)); c.lineTo(s[0], s[1]); c.stroke(); c.setLineDash([]); }
+    this.drawHUD(c, g);
+  },
+  depthKm(age){ return 2.5 + 0.35 * Math.sqrt(Math.max(0, age)); },
+  drawSection(c, g){
+    const R = this.R, X = x => g.W / 2 + x * g.sx * 1.05, sea = 118;
+    const Yf = age => sea + 30 + (this.depthKm(age) - 2.5) * 180;      // 수심 과장
+    const sedPx = age => Math.min(8, age) * 5;                           // 퇴적물 두께 과장
+    // 바다
+    c.fillStyle = '#bae6fd'; c.fillRect(X(-R), sea, X(R) - X(-R), g.H - sea);
+    c.fillStyle = '#0369a1'; c.font = '16px Jua, sans-serif'; c.textAlign = 'left'; c.fillText('해수면', X(-R) + 6, sea - 6);
+    c.strokeStyle = '#0369a1'; c.lineWidth = 2; c.beginPath(); c.moveTo(X(-R), sea); c.lineTo(X(R), sea); c.stroke();
+    // 열 단위로 지각·퇴적물
+    const crustTh = 50;
+    for (let px = Math.ceil(X(-R)); px < X(R); px += 2) {
+      const x = (px - g.W / 2) / (g.sx * 1.05), cc = this.at(x), age = cc.age;
+      const yf = Yf(age), sp = sedPx(age);
+      c.fillStyle = '#d6b98c'; c.fillRect(px, yf - sp, 2, sp);
+      c.fillStyle = cc.pre ? '#cbd5e1' : (age < 0.06 ? '#f97316' : this.color(cc.pol)); c.fillRect(px, yf, 2, crustTh);
+      c.fillStyle = '#fdba74'; c.fillRect(px, yf + crustTh, 2, g.H - yf - crustTh);
+    }
+    c.fillStyle = '#ef4444'; c.beginPath(); c.moveTo(X(0) - 60, g.H); c.quadraticCurveTo(X(0), Yf(0) + crustTh, X(0) + 60, g.H); c.fill();
+    c.fillStyle = '#dc2626'; c.textAlign = 'center'; c.font = '20px Jua, sans-serif'; c.fillText('해령', X(0), Yf(0) - 14);
+    // 라벨
+    c.fillStyle = '#7c5a3a'; c.font = '16px Jua, sans-serif'; c.textAlign = 'left';
+    const lx = R * 0.72, ly = Yf(this.at(lx).age) - sedPx(this.at(lx).age);
+    c.fillText('퇴적물', X(lx) + 4, ly - 6);
+    c.fillStyle = '#475569'; c.font = '14px Jua, sans-serif'; c.textAlign = 'center';
+    for (let x = -R; x <= R; x += 100) c.fillText(Math.abs(x) + ' km', X(x), g.H - 6);
+    c.fillStyle = '#64748b'; c.textAlign = 'left'; c.fillText('세로 방향(수심·퇴적물 두께)은 과장했어요', X(-R) + 6, g.H - 26);
+    if (this.pick !== null) { c.strokeStyle = '#0ea5e9'; c.lineWidth = 3; c.beginPath(); c.moveTo(X(this.pick), sea); c.lineTo(X(this.pick), g.H - 40); c.stroke(); }
+    if (this.ship) { c.font = '30px sans-serif'; c.textAlign = 'center'; c.fillText('🚢', X(this.ship.x), sea - 2); }
+  },
+  drawHUD(c, g){
+    // 나침반 + 시점
+    const bx = 14, by = 10;
+    c.fillStyle = 'rgba(255,255,255,.95)'; c.strokeStyle = '#cbd5e1'; c.lineWidth = 2; c.beginPath(); c.roundRect ? c.roundRect(bx, by, 300, 72, 14) : c.rect(bx, by, 300, 72); c.fill(); c.stroke();
+    const pol = this.cur, cxp = bx + 38, cyp = by + 36;
+    c.strokeStyle = '#334155'; c.lineWidth = 2; c.beginPath(); c.arc(cxp, cyp, 26, 0, 7); c.stroke();
+    c.fillStyle = '#dc2626'; c.beginPath(); const up = pol === 'N';
+    c.moveTo(cxp - 6, cyp); c.lineTo(cxp + 6, cyp); c.lineTo(cxp, up ? cyp - 22 : cyp + 22); c.closePath(); c.fill();
+    c.fillStyle = '#94a3b8'; c.beginPath(); c.moveTo(cxp - 6, cyp); c.lineTo(cxp + 6, cyp); c.lineTo(cxp, up ? cyp + 22 : cyp - 22); c.closePath(); c.fill();
+    c.fillStyle = '#334155'; c.font = '12px Jua, sans-serif'; c.textAlign = 'center'; c.fillText('북', cxp, by + 9);
+    const ago = Math.max(0, (this.T - this.E) * 100);
+    c.textAlign = 'left'; c.font = '17px Jua, sans-serif'; c.fillStyle = '#334155';
+    c.fillText(ago < 0.5 ? '지금 시점: 현재' : `지금 시점: 약 ${Math.round(ago)}만 년 전`, bx + 76, by + 28);
+    c.font = '20px Jua, sans-serif'; c.fillStyle = up ? '#6b4a3a' : '#b45309';
+    c.fillText(up ? '정자극기' : '역자극기', bx + 76, by + 56);
+    c.font = '13px Jua, sans-serif'; c.fillStyle = '#64748b'; c.fillText(up ? '나침반 N극 → 북쪽' : '나침반 N극 → 남쪽', bx + 168, by + 56);
+    if (this.mode === 'manual') { c.fillStyle = '#e11d48'; c.font = '14px Jua, sans-serif'; c.fillText('직접 뒤집기 모드', bx + 168, by + 28); }
+  },
+  drawGraph(){
+    const cv = $('pmG'); if (!cv || !cv._w) return; const c = hiDPI(cv), W = cv._w, H = cv._h, R = this.R;
+    const g = this.geo(), X = x => this.view === 'section' ? W / 2 + x * g.sx * 1.05 : g.cx + x * g.sx + 0.5 * g.shear, mid = H / 2;
+    c.clearRect(0, 0, W, H); c.fillStyle = '#f8fafc'; c.fillRect(0, 0, W, H);
+    c.strokeStyle = '#cbd5e1'; c.lineWidth = 1; c.beginPath(); c.moveTo(X(-R), mid); c.lineTo(X(R), mid); c.stroke();
+    c.strokeStyle = '#dc2626'; c.setLineDash([6, 5]); c.beginPath(); c.moveTo(X(0), 10); c.lineTo(X(0), H - 10); c.stroke(); c.setLineDash([]);
+    c.fillStyle = '#475569'; c.font = '15px Jua, sans-serif'; c.textAlign = 'left'; c.fillText('+ 강함', 8, 24); c.fillText('− 약함', 8, H - 12);
+    c.textAlign = 'center'; c.fillStyle = '#dc2626'; c.fillText('해령', X(0), 16);
+    if (!this.anom.length) { c.fillStyle = '#94a3b8'; c.font = '18px Jua, sans-serif'; c.fillText('🚢 탐사선을 띄워 보세요', W / 2, mid - 10); return; }
+    c.strokeStyle = '#0ea5e9'; c.lineWidth = 3; c.beginPath();
+    this.anom.forEach(([x, v], i) => { const px = X(x), py = mid - v * (H / 2 - 22); i ? c.lineTo(px, py) : c.moveTo(px, py); }); c.stroke();
+  }
+};
+
+/* ===== 7 열류량 ===== */
+function initS7(){
+  choiceChips('s7pick', S7, () => S.s7.pick, v => S.s7.pick = v, () => S.s7.locked, '해령');
+  bindText('s7lens', () => S.s7, 'lens');
+  $('s7lock').onclick = () => { if (!S.s7.pick || !filled(S.s7.lens)) { toast('두 가지 모두 답해 봐요'); return; } S.s7.locked = true; applyS7(); saveNow(); };
+  applyS7();
+}
+function applyS7(){
+  paintChips('s7pick', S.s7.pick, S.s7.locked, '해령'); lockFields(['s7lens'], S.s7.locked); lockBtn('s7lock', S.s7.locked);
+  const fb = $('s7fb'); if (S.s7.locked) { const ok = S.s7.pick === '해령'; fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.textContent = ok ? '맞아요. 빨간 띠가 해령을 따라 이어져요 ✓' : '지도에서 빨간 띠를 따라가 봐요. 해령과 겹쳐요.'; } else fb.textContent = '';
+}
+
+/* ===== 8 섭입대·변환 단층 ===== */
+function initS8(){
+  choiceChips('s8a', S8A, () => S.s8.a, v => S.s8.a = v, () => S.s8.locked, '깊어진다');
+  choiceChips('s8b', S8B, () => S.s8.b, v => S.s8.b = v, () => S.s8.locked, '해령과 해령 사이');
+  bindText('s8why', () => S.s8, 'why');
+  $('s8lock').onclick = () => { if (!S.s8.a || !S.s8.b || !filled(S.s8.why)) { toast('세 가지 모두 답해 봐요'); return; } S.s8.locked = true; applyS8(); saveNow(); };
+  applyS8();
+}
+function applyS8(){
+  paintChips('s8a', S.s8.a, S.s8.locked, '깊어진다'); paintChips('s8b', S.s8.b, S.s8.locked, '해령과 해령 사이');
+  lockFields(['s8why'], S.s8.locked); lockBtn('s8lock', S.s8.locked);
+  const fa = $('s8afb'), fbb = $('s8bfb');
+  if (S.s8.locked) {
+    fa.className = 'fb ok'; fa.textContent = '해양 지각이 비스듬히 들어가므로 대륙 쪽으로 갈수록 깊어져요.';
+    fbb.className = 'fb ok'; fbb.textContent = '해령과 해령 사이에서만 양쪽이 반대로 움직여 지진이 잦아요.';
+  } else { fa.textContent = ''; fbb.textContent = ''; }
+}
+
+/* ===== 9 ===== */
+function initS9(){
+  ['now', 'r', 't'].forEach(k => bindText('s9' + k, () => S.s9, k));
+  $('s9lock').onclick = () => { if (!filled(S.s9.now, S.s9.r, S.s9.t)) { toast('나중 생각과 렌즈 질문을 모두 써 봐요'); return; } S.s9.locked = true; applyS9(); saveNow(); toast('오늘 수업 끝! 수고했어요'); };
+  applyS9();
+}
+function applyS9(){ lockFields(['s9now', 's9r', 's9t'], S.s9.locked); lockBtn('s9lock', S.s9.locked); }
+
+/* ===== 질문 ===== */
+let qTag = TAGS[0];
+function initQ(){
+  const tg = $('qtags'); tg.innerHTML = '';
+  TAGS.forEach(t => { const b = document.createElement('button'); b.className = 'chip' + (t === qTag ? ' on' : ''); b.textContent = t; b.onclick = () => { qTag = t; tg.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b)); }; tg.appendChild(b); });
+  $('qbtn').onclick = () => { $('qmodal').classList.add('on'); renderQ(); $('qtext').focus(); };
+  $('qclose').onclick = () => $('qmodal').classList.remove('on');
+  $('qsave').onclick = () => {
+    const t = $('qtext').value.trim(); if (!t) { toast('질문을 먼저 써 봐요'); return; }
+    S.qs.push({ t, tag: qTag, src: VIEW, at: Date.now() }); $('qtext').value = ''; renderQ(); saveNow(); toast('질문을 보냈어요');
+  };
+  renderQ();
+}
+function renderQ(){
+  $('qcount').textContent = S.qs.length;
+  $('qlist').innerHTML = S.qs.length ? S.qs.slice().reverse().map(q => `<div class="qitem"><small>${esc(q.tag)} · ${q.src}단계</small>${esc(q.t)}</div>`).join('') : '<p class="read" style="color:#94a3b8">아직 없어요</p>';
+}
+
+/* ===== 시작 ===== */
+function initStart(){
+  $('inCls').innerHTML = '<option value="">선택</option>' + Array.from({ length: 7 }, (_, i) => `<option value="${i + 1}">${i + 1}반</option>`).join('');
+  $('goBtn').onclick = start;
+}
+async function start(){
+  const cls = $('inCls').value, numv = $('inNum').value.trim(), name = $('inName').value.trim();
+  if (!cls || !numv || !name) { $('startMsg').textContent = '반, 번호, 이름을 모두 써 주세요'; return; }
+  $('goBtn').disabled = true; $('startMsg').textContent = '';
+  try {
+    ME = { cls, num: Number(numv), name };
+    if (!AUTH) await signUpAnon();
+    store();
+    await enter();
+  } catch (e) { $('startMsg').textContent = '연결하지 못했어요. 인터넷을 확인하고 다시 눌러 주세요'; $('goBtn').disabled = false; }
+}
+async function enter(){
+  try {
+    const d = await fsGet(`${COL}/${AUTH.uid}`);
+    if (d && d.fields && d.fields.data) {
+      const saved = JSON.parse(d.fields.data.stringValue), b = blank();
+      S = Object.assign(b, saved);
+      Object.keys(b).forEach(k => { if (k !== 'qs') S[k] = Object.assign(blank()[k], saved[k] || {}); });
+    }
+  } catch (e) {}
+  $('start').classList.remove('on'); $('main').classList.add('on'); $('qbtn').style.display = 'block';
+  $('who').textContent = `${ME.cls}반 ${ME.num}번 ${ME.name}`;
+  initS1(); initS2(); initS3(); initS4(); initS5(); initS6(); initS7(); initS8(); initS9(); initQ();
+  await pollCtrl(); renderTabs(); go(Math.min(STAGE, Math.max(1, Math.min(maxStageReached(), NSTAGE))));
+  saveNow();
+  setInterval(pollCtrl, 5000);
+}
+function resetLocal(){
+  if (!window.confirm('이 기기의 기록을 지우고 처음부터 시작할까요? (이미 보낸 기록은 선생님께 남아 있어요)')) return;
+  try { localStorage.removeItem(SKEY); } catch (e) {}
+  location.reload();
+}
+window.addEventListener('beforeunload', () => { if (dirty) saveNow(); });
+
+function saveNow(){ dirty = false; setSave('미리보기 · 저장 안 됨'); }
+function queueSave(){ setSave('미리보기 · 저장 안 됨'); }
+async function pollCtrl(){}
+function boot(){
+  ME = { cls: '연습', num: 0, name: '선생님' };
+  $('start').classList.remove('on'); $('main').classList.add('on'); $('qbtn').style.display = 'block';
+  $('who').textContent = '연습용 · 선생님';
+  initS1(); initS2(); initS3(); initS4(); initS5(); initS6(); initS7(); initS8(); initS9(); initQ();
+  STAGE = NSTAGE; renderTabs(); go(1); setSave('미리보기 · 저장 안 됨');
+  $('resetBtn').style.display = 'none';
+  $('pvReset').onclick = () => location.reload();
+  $('pvSim').onclick = () => { go(6); setTimeout(() => { const y = $('s6rev').getBoundingClientRect().top + window.scrollY - 70; window.scrollTo({ top: y }); }, 150); };
+}
+window.SF = { get PM(){ return PM; }, get S(){ return S; }, applyS6, SP5 };
+boot();
+</script>
+</body>
+</html>
